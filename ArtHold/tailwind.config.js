@@ -13,6 +13,7 @@ export default {
       primary: "#150620",
       secondary: "#48234d",
       textPrimary: "#070809",
+      textSecondary: "#edf487",
       blue: "#1fb6ff",
       pink: "#ff49db",
       orange: "#ff7849",
@@ -21,7 +22,14 @@ export default {
       gray: "#8492a6",
       "gray-light": "#d3dce6",
     },
-    extend: {},
+    extend: {
+      fontFamily: {
+        roboto: ["bebasNeue", "sans-serif"],
+      },
+    },
   },
-  plugins: [require("@tailwindcss/typography")],
+  plugins: [
+    require("@tailwindcss/typography"),
+    require("tailwindcss-animated"),
+  ],
 };
