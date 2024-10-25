@@ -8,7 +8,7 @@ const toggleDropdown = () => {
 
 <template>
   <button
-    :class="{ 'rotate-45': isOpen, 'transition-transform': true }"
+    :class="{ 'rotate-90': isOpen, 'transition-transform': true }"
     class="w-12 aspect-square"
     @click="toggleDropdown"
     type="button"
@@ -26,18 +26,33 @@ const toggleDropdown = () => {
     class="origin-top-left z-10 absolute top-14 mt-2 w-56 rounded-sm shadow-md bg-textSecondary focus:outline-none animate-fade-down animate-once animate-duration-100 animate-ease-linear animate-normal"
   >
     <div
-      class="py-2 flex justify-center items-center hover:bg-primary hover:text-textSecondary"
+      class="p-2 gap-8 flex justify-start items-center hover:bg-primary hover:text-textSecondary"
     >
+      <NuxtImg
+        src="/upload-window-svgrepo-black-com.svg"
+        alt="Upload"
+        class="w-6 h-max"
+      />
       <NuxtLink :to="{ path: '/' }">Upload</NuxtLink>
     </div>
     <div
-      class="py-2 flex justify-center items-center hover:bg-primary hover:text-textSecondary"
+      class="p-2 gap-8 flex justify-start items-center hover:bg-primary hover:text-textSecondary"
     >
+      <NuxtImg
+        src="/notification-bing-svgrepo-black-com.svg"
+        alt="notifications"
+        class="w-6 h-max"
+      />
       <NuxtLink :to="{ path: '/' }">Notifications</NuxtLink>
     </div>
     <div
-      class="py-2 flex justify-center items-center hover:bg-primary hover:text-textSecondary"
+      class="p-2 gap-8 flex justify-start items-center hover:bg-primary hover:text-textSecondary"
     >
+      <NuxtImg
+        src="/service-contract-svgrepo-com.svg"
+        alt="terms"
+        class="w-6 h-max"
+      />
       <NuxtLink :to="{ path: '/' }">Terms Of Service</NuxtLink>
     </div>
   </div>

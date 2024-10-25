@@ -15,9 +15,12 @@ const logo = ref(getLogo);
     class="bg-primary w-full h-full min-h-screen flex flex-col items-center p-0 m-0"
   >
     <header
-      class="w-full h-20 bg-gradient-to-b from-secondary to-primary flex justify-between items-center px-6 sticky top-0"
+      class="w-full h-20 bg-gradient-to-b from-secondary to-primary flex justify-between items-center px-6 sticky top-0 z-50"
     >
-      <DropdownMenu></DropdownMenu>
+      <div class="flex items-center space-x-4">
+        <DropdownMenu></DropdownMenu>
+        <SearchBar></SearchBar>
+      </div>
       <NuxtLink
         :to="{ path: '/' }"
         class="absolute left-1/2 transform -translate-x-1/2"
