@@ -25,6 +25,7 @@ const toggleDropdown = () => {
     v-if="isOpen"
     class="origin-top-left z-10 absolute top-14 mt-2 w-56 rounded-sm shadow-md bg-textSecondary focus:outline-none animate-fade-down animate-once animate-duration-100 animate-ease-linear animate-normal"
   >
+    <slot name="dropdown"></slot>
     <div
       class="p-2 gap-8 flex justify-start items-center hover:bg-primary hover:text-textSecondary"
     >

@@ -18,8 +18,16 @@ const logo = ref(getLogo);
       class="w-full h-20 bg-gradient-to-b from-secondary to-primary flex justify-between items-center px-6 sticky top-0 z-50"
     >
       <div class="flex items-center space-x-4">
-        <DropdownMenu></DropdownMenu>
-        <SearchBar></SearchBar>
+        <DropdownMenu>
+          <template #dropdown>
+            <div class="block md:hidden">
+              <SearchBar />
+            </div>
+          </template>
+        </DropdownMenu>
+        <div class="hidden md:block">
+          <SearchBar />
+        </div>
       </div>
       <NuxtLink
         :to="{ path: '/' }"

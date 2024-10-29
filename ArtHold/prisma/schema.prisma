@@ -1,0 +1,42 @@
+datasource db {
+    url      = env("DATABASE_URL")
+    provider = "postgresql"
+}
+
+generator client {
+    provider      = "prisma-client-js"
+    binaryTargets = ["native", "darwin-arm64"]
+}
+
+model User {
+    id            Int       @id @default(autoincrement())
+    nickname      String
+    description   String
+    profileImage  String
+    likedArtworks Int
+    login         String
+    password      String
+    createdAt     DateTime  @default(now())
+    updatedAt     DateTime  @updatedAt
+    albums        Album[]
+    Artwork       Artwork[]
+}
+
+model Artwork {
+    id           Int    @id @default(autoincrement())
+    artworkImage String
+    name         String
+    description  String
+    likes        Int
+    albumID      Int?
+    album        Album? @relation(fields: [albumID], references: [id])
+    userID       Int
+    user         User   @relation(fields: [userID], references: [id])
+}
+
+model Album {
+    id               Int       @id @default(autoincrement())
+    assignedArtworks Artwork[]
+    userID           Int
+    user             User      @relation(fields: [userID], references: [id]) // Add this line to establish the relationship
+}

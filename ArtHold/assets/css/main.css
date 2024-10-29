@@ -9,9 +9,10 @@
   a,
   button,
   h1,
-  label {
+  label,
+  input {
     font-family: "Bebas Neue", sans-serif;
-    font-size: 20px;
+    font-size: 18px;
     font-weight: 500;
     text-decoration: none;
   }
