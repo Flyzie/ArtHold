@@ -1,13 +1,9 @@
-<script setup>
-import { ref } from "vue";
+<script setup lang="ts">
 import ProfileMenu from "~/components/profileMenu.vue";
-/*
-const getLogo = computed(() => {
-  return "assets/img/logo.png";
-});
 
-const logo = ref(getLogo);
-*/
+const { status, signIn, signOut } = useAuth();
+
+const loggedIn = computed(() => status.value === "authenticated");
 </script>
 
 <template>
@@ -35,7 +31,13 @@ const logo = ref(getLogo);
       >
         <NuxtImg src="/logo.png" alt="site logo" class="w-12 h-max" />
       </NuxtLink>
-      <ProfileMenu></ProfileMenu>
+      <NuxtLink
+        v-if="!loggedIn"
+        class="p-3 bg-textSecondary text-textPrimary rounded-md"
+        :to="{ name: 'login' }"
+        >Sign In</NuxtLink
+      >
+      <ProfileMenu v-else></ProfileMenu>
     </header>
 
     <slot />

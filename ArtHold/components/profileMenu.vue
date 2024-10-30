@@ -1,9 +1,20 @@
-<script setup>
+<script setup lang="ts">
+const { status, signIn, signOut } = useAuth();
+
 const isOpen = ref(false);
 
 const toggleDropdown = () => {
   isOpen.value = !isOpen.value;
 };
+
+async function handleSignOut() {
+  const { error } = await signOut();
+
+  if (error) {
+    console.error(error);
+    return;
+  }
+}
 </script>
 
 <template>
@@ -46,7 +57,7 @@ const toggleDropdown = () => {
         alt="terms"
         class="w-6 h-max"
       />
-      <NuxtLink :to="{ path: '/' }">Terms Of Service</NuxtLink>
+      <button @click="handleSignOut">Sign Out</button>
     </div>
   </div>
 </template>

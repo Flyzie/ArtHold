@@ -12,5 +12,8 @@ export default defineNuxtConfig({
     },
   },
 
-  modules: ["@nuxt/image", "@sidebase/nuxt-auth"],
+  modules: ["@nuxt/image", "@sidebase/nuxt-auth", "@nuxt/icon"],
+  auth: {
+    globalAppMiddleware: false,
+  },
 });
