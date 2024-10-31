@@ -1,7 +1,7 @@
 <script setup lang="ts">
 const { status, signIn, signOut } = useAuth();
 
-const nickname = ref("");
+const email = ref("");
 const password = ref("");
 
 async function handleSignIn() {
@@ -19,15 +19,13 @@ definePageMeta({
   >
     <h1 class="text-4xl text-textSecondary">Login</h1>
     <form
-      @submit.prevent="
-        ($event) => signIn('credentials', { nickname, password })
-      "
+      @submit.prevent="($event) => signIn('credentials', { email, password })"
       class="flex flex-col justify-center items-center p-5 gap-5 w-full"
     >
       <input
-        v-model="nickname"
+        v-model="email"
         type="text"
-        placeholder="nickname"
+        placeholder="email"
         id="nickname"
         name="nickname"
         class="p-5 w-full rounded-sm"

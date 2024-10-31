@@ -8,9 +8,9 @@
     <form class="flex flex-col justify-center items-center p-5 gap-5 w-full">
       <input
         type="text"
-        placeholder="nickname"
-        id="nickname"
-        name="nickname"
+        placeholder="email"
+        id="email"
+        name="email"
         class="p-5 w-full rounded-sm"
       />
       <input

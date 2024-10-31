@@ -1,0 +1,5 @@
+-- AlterTable
+ALTER TABLE "User" ALTER COLUMN "description" DROP NOT NULL,
+ALTER COLUMN "profileImage" DROP NOT NULL,
+ALTER COLUMN "likedArtworks" DROP NOT NULL,
+ALTER COLUMN "updatedAt" DROP NOT NULL;
