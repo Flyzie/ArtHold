@@ -1,12 +1,76 @@
-<script setup lang="ts"></script>
+<script setup lang="ts">
+import { ref } from "vue";
+import { useRouter } from "vue-router";
+const { status, signIn } = useAuth();
+
+const name = ref("");
+const email = ref("");
+const password = ref("");
+const confirmPassword = ref("");
+const router = useRouter();
+
+async function handleSignIn() {
+  await signIn("credentials", {
+    redirect: false,
+    email: email.value,
+    password: password.value,
+  });
+  window.location.reload();
+}
+
+const handleRegister = async () => {
+  try {
+    const response = await fetch("/api/register", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        name: name.value,
+        email: email.value,
+        password: password.value,
+        confirmPassword: confirmPassword.value,
+      }),
+    });
+
+    if (!response.ok) {
+      const error = await response.json();
+      throw new Error(error.statusMessage);
+    }
+
+    const data = await response.json();
+    console.log("User created successfully:", data);
+
+    // Redirect to login page after successful registration
+    handleSignIn();
+  } catch (error) {
+    console.error("Registration failed:", error);
+  }
+};
+definePageMeta({
+  middleware: ["redirect-if-authenticated"],
+});
+</script>
 
 <template>
   <div
     class="bg-secondary min-w-fit w-1/3 h-max flex flex-col justify-center items-center p-5 rounded-md"
   >
     <h1 class="text-4xl text-textSecondary">Register</h1>
-    <form class="flex flex-col justify-center items-center p-5 gap-5 w-full">
+    <form
+      @submit.prevent="handleRegister"
+      class="flex flex-col justify-center items-center p-5 gap-5 w-full"
+    >
       <input
+        v-model="name"
+        type="text"
+        placeholder="Your Nickname"
+        id="name"
+        name="name"
+        class="p-5 w-full rounded-sm"
+      />
+      <input
+        v-model="email"
         type="text"
         placeholder="email"
         id="email"
@@ -14,6 +78,7 @@
         class="p-5 w-full rounded-sm"
       />
       <input
+        v-model="password"
         type="text"
         placeholder="password"
         id="password"
@@ -21,6 +86,7 @@
         class="p-5 w-full rounded-sm"
       />
       <input
+        v-model="confirmPassword"
         type="text"
         placeholder="Confirm Password"
         id="confirmPassword"

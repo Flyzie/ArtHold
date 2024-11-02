@@ -26,8 +26,8 @@ definePageMeta({
         v-model="email"
         type="text"
         placeholder="email"
-        id="nickname"
-        name="nickname"
+        id="email"
+        name="email"
         class="p-5 w-full rounded-sm"
       />
       <input

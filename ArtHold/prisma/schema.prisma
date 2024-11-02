@@ -10,12 +10,12 @@ generator client {
 
 model User {
     id            Int       @id @default(autoincrement())
-    nickname      String
-    description   String?
-    profileImage  String?
-    likedArtworks Int?
-    email         String
+    email         String    @unique
     password      String
+    name          String
+    description   String?
+    image         String?
+    likedArtworks Int?
     createdAt     DateTime  @default(now())
     updatedAt     DateTime? @updatedAt
     albums        Album[]
