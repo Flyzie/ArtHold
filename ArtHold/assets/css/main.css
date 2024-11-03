@@ -10,7 +10,8 @@
   button,
   h1,
   label,
-  input {
+  input,
+  p {
     font-family: "Bebas Neue", sans-serif;
     font-size: 18px;
     font-weight: 500;

@@ -54,7 +54,7 @@ async function handleSignOut() {
         alt="Upload"
         class="w-6 h-max"
       />
-      <NuxtLink :to="{ path: '/' }">My Profile</NuxtLink>
+      <NuxtLink :to="{ path: `/user/${data?.user.id}` }">My Profile</NuxtLink>
     </div>
     <div
       class="p-2 gap-8 flex justify-start items-center hover:bg-primary hover:text-textSecondary"
