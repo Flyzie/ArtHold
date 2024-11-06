@@ -1,6 +1,7 @@
 // ArtHold/server/api/register.post.ts
 import { PrismaClient } from "@prisma/client";
 import formidable from "formidable";
+import fs from "fs";
 
 const prisma = new PrismaClient();
 
@@ -56,6 +57,17 @@ export default defineEventHandler(async (event) => {
       statusMessage: "User does not exists",
     });
   }
+
+  if (existingUser.image) {
+    fs.unlink(`public/${existingUser.image}`, (err) => {
+      if (err) {
+        console.log("Unable to delete existing image or it doesnt exist", err);
+      } else {
+        console.log(`deleting file: /img/profilePics/${existingUser.image}`);
+      }
+    });
+  }
+
   try {
     const updatedUser = await prisma.user.update({
       where: { id: userId },
