@@ -1,11 +1,61 @@
 <script setup lang="ts">
 import { ref } from "vue";
 import { useRouter } from "vue-router";
-const { status, signIn } = useAuth();
+const { status, data, signIn } = useAuth();
 
-const name = ref("");
-const description = ref("");
-const image = ref("");
+const route = useRoute();
+const router = useRouter();
+
+const userData = await useUser(Number(data.value?.user.id));
+
+const name = ref(userData.value?.name || "");
+const description = ref(userData.value?.description || "");
+const image = ref<File | null>(null);
+//const image = ref(userData.value?.image);
+
+const handleFileChange = (event: Event) => {
+  const target = event.target as HTMLInputElement;
+  if (target.files && target.files[0]) {
+    image.value = target.files[0];
+  }
+};
+
+const handleEdit = async (e: any) => {
+  try {
+    const formData = new FormData(this);
+    formData.append("id", String(data.value?.user.id));
+    formData.append("name", name.value);
+    formData.append("description", description.value);
+    if (image.value) {
+      formData.append("image", image.value);
+    }
+
+    for (const [k, v] of formData.entries()) {
+      console.log(k, v);
+    }
+
+    const response = await fetch("/api/updateProfile", {
+      method: "PUT",
+      body: formData,
+    });
+
+    if (!response.ok) {
+      const error = await response.json();
+      throw new Error(error.statusMessage);
+    }
+
+    const useData = await response.json();
+    console.log("User updated succesfully:", useData);
+
+    router.push(`/user/${data.value?.user.id}`);
+  } catch (error) {
+    console.error("Update failed", error);
+  }
+};
+
+definePageMeta({
+  middleware: ["redirect-if-not-authenticated"],
+});
 </script>
 
 <template>
@@ -14,15 +64,22 @@ const image = ref("");
   >
     <h1 class="text-4xl text-textSecondary">Edit Profile</h1>
     <form
-      @submit.prevent=""
-      class="flex flex-col justify-center items-center p-5 gap-5 w-full"
+      @submit.prevent="handleEdit"
+      class="flex flex-col justify-center items-center p-5 gap-2 w-full"
     >
+      <label
+        for="file"
+        class="w-full p-1 text-left bg-textPrimary text-textSecondary"
+        >Profile Picture:</label
+      >
       <input
         type="file"
         placeholder="Your Profile Image"
+        accept="image/png, image/jpeg"
         id="file"
         name="file"
         class="p-5 w-full rounded-sm"
+        @change="handleFileChange"
       />
       <input
         v-model="name"
@@ -32,6 +89,11 @@ const image = ref("");
         name="name"
         class="p-5 w-full rounded-sm"
       />
+      <label
+        for="description"
+        class="w-full p-1 text-left bg-textPrimary text-textSecondary"
+        >Description</label
+      >
       <input
         v-model="description"
         type="text"
@@ -47,12 +109,6 @@ const image = ref("");
       />
     </form>
     <hr class="w-full my-4 border-t-2 border-textSecondary" />
-    <div class="flex gap-2">
-      <p class="text-textPrimary">Already have an account?</p>
-      <NuxtLink class="text-textSecondary" :to="{ name: 'login' }"
-        >Login Here!</NuxtLink
-      >
-    </div>
   </div>
 </template>
 <style scoped></style>

@@ -12,8 +12,23 @@ export default defineNuxtConfig({
     },
   },
 
-  modules: ["@nuxt/image", "@sidebase/nuxt-auth", "@nuxt/icon"],
+  modules: [
+    "@nuxt/image",
+    "@sidebase/nuxt-auth",
+    "@nuxt/icon",
+    "nuxt-file-storage",
+    "@vueuse/nuxt",
+  ],
   auth: {
     globalAppMiddleware: false,
+  },
+
+  nitro: {
+    publicAssets: [
+      {
+        baseURL: "/img",
+        dir: "public/img",
+      },
+    ],
   },
 });
