@@ -81,6 +81,11 @@ definePageMeta({
         class="p-5 w-full rounded-sm"
         @change="handleFileChange"
       />
+      <label
+        for="name"
+        class="w-full p-1 text-left bg-textPrimary text-textSecondary"
+        >Your Nickname:</label
+      >
       <input
         v-model="name"
         type="text"
@@ -92,7 +97,7 @@ definePageMeta({
       <label
         for="description"
         class="w-full p-1 text-left bg-textPrimary text-textSecondary"
-        >Description</label
+        >Description:</label
       >
       <input
         v-model="description"

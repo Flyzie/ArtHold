@@ -49,7 +49,7 @@ onBeforeUnmount(() => {
           alt="Upload"
           class="w-6 h-max"
         />
-        <NuxtLink :to="{ path: '/' }">Upload</NuxtLink>
+        <NuxtLink :to="{ path: '/projects/newArtwork' }">Upload</NuxtLink>
       </div>
       <div
         class="p-2 gap-8 flex justify-start items-center hover:bg-primary hover:text-textSecondary"

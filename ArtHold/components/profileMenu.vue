@@ -83,16 +83,6 @@ onBeforeUnmount(() => {
         class="p-2 gap-8 flex justify-start items-center hover:bg-primary hover:text-textSecondary"
       >
         <NuxtImg
-          src="/notification-bing-svgrepo-black-com.svg"
-          alt="notifications"
-          class="w-6 h-max"
-        />
-        <NuxtLink :to="{ path: '/' }">Notifications</NuxtLink>
-      </div>
-      <div
-        class="p-2 gap-8 flex justify-start items-center hover:bg-primary hover:text-textSecondary"
-      >
-        <NuxtImg
           src="/service-contract-svgrepo-com.svg"
           alt="terms"
           class="w-6 h-max"

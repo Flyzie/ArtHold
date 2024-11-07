@@ -5,6 +5,10 @@ export default defineNuxtConfig({
   css: ["~/assets/css/main.css"],
   pages: true,
 
+  imports: {
+    autoImport: true,
+  },
+
   postcss: {
     plugins: {
       tailwindcss: {},
