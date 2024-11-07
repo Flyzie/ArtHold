@@ -1,22 +1,11 @@
 <script setup>
+import useAllArtworks from "~/composables/useAllArtworks";
+import useUser from "~/composables/useUser";
 import { ref, onMounted } from "vue";
 
-const images = ref([]);
+const artworks = await useAllArtworks();
 
 const hoveredImageId = ref(null);
-
-const fetchImages = async () => {
-  try {
-    const response = await fetch(
-      "https://picsum.photos/v2/list?page=2&limit=16"
-    );
-    const data = await response.json();
-    console.log(data);
-    images.value = data;
-  } catch (error) {
-    console.error("Error fetching images:", error);
-  }
-};
 
 const toggleHovered = (id) => {
   hoveredImageId.value = id;
@@ -25,10 +14,6 @@ const toggleHovered = (id) => {
 const clearHovered = () => {
   hoveredImageId.value = null;
 };
-
-onMounted(() => {
-  fetchImages();
-});
 </script>
 
 <template>
@@ -36,44 +21,26 @@ onMounted(() => {
     class="w-full h-full text-textPrimary grid grid-flow-row grid-cols-[repeat(auto-fit,minmax(250px,1fr))] gap-1"
   >
     <div
-      v-for="image in images"
-      @mouseenter="toggleHovered(image.id)"
+      v-for="artwork in artworks"
+      @mouseenter="toggleHovered(artwork.id)"
       @mouseleave="clearHovered"
-      :key="image.id"
-      class="bg-orange aspect-square overflow-hidden flex items-center justify-center rounded-md m-0 relative"
+      :key="artwork.id"
+      class="bg-textSecondary aspect-square overflow-hidden flex items-center justify-center rounded-md m-0 relative"
     >
       <div
         class="absolute origin-bottom-left bottom-0 p-2 left-0 bg-opacity-85 backdrop-blur-xl text-white animate-fade animate-once animate-duration-300 animate-ease-linear z-10 animate-normal"
-        v-if="hoveredImageId === image.id"
+        v-if="hoveredImageId === artwork.id"
       >
-        <h1 class="w-full text-wrap">Placeholder Title</h1>
-        <h2 class="w-full text-wrap">{{ image.author }}</h2>
+        <h1 class="w-full text-wrap">{{ artwork.title }}</h1>
+        <h2 class="w-full text-wrap">{{ artwork.user.name.toUpperCase() }}</h2>
       </div>
-      <img
-        :src="image.download_url"
-        :alt="image.author"
+      <NuxtImg
+        width="500"
+        height="500"
+        :src="artwork.artworkImage"
+        :alt="artwork.description"
         class="w-full h-full object-cover rounded-md transition-transform duration-300 hover-animate"
-      />
-    </div>
-    <div
-      v-for="image in images"
-      @mouseenter="toggleHovered(image.id)"
-      @mouseleave="clearHovered"
-      :key="image.id"
-      class="bg-orange aspect-square overflow-hidden flex items-center justify-center rounded-md m-0 relative"
-    >
-      <div
-        class="absolute origin-bottom-left bottom-0 p-2 left-0 bg-opacity-85 backdrop-blur-xl text-white animate-fade animate-once animate-duration-300 animate-ease-linear z-10 animate-normal"
-        v-if="hoveredImageId === image.id"
-      >
-        <h1 class="w-full text-wrap">Placeholder Title</h1>
-        <h2 class="w-full text-wrap">{{ image.author }}</h2>
-      </div>
-      <img
-        :src="image.download_url"
-        :alt="image.author"
-        class="w-full h-full object-cover rounded-md transition-transform duration-300 hover-animate"
-      />
+      ></NuxtImg>
     </div>
   </div>
 </template>
