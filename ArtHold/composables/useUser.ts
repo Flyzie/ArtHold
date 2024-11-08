@@ -1,6 +1,6 @@
 import type { User } from "@prisma/client";
 
-export default async (userID: number) => {
+export default async (userID: Number) => {
   const { data, error } = await useFetch<User>(`/api/user/${userID}`);
 
   if (error.value) {

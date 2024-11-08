@@ -34,13 +34,15 @@ const clearHovered = () => {
         <h1 class="w-full text-wrap">{{ artwork.title }}</h1>
         <h2 class="w-full text-wrap">{{ artwork.user.name.toUpperCase() }}</h2>
       </div>
-      <NuxtImg
-        width="500"
-        height="500"
-        :src="artwork.artworkImage"
-        :alt="artwork.description"
-        class="w-full h-full object-cover rounded-md transition-transform duration-300 hover-animate"
-      ></NuxtImg>
+      <NuxtLink :to="{ path: `/artwork/${artwork.id}` }">
+        <NuxtImg
+          width="500"
+          height="500"
+          :src="artwork.artworkImage"
+          :alt="artwork.description"
+          class="w-full h-full object-cover rounded-md transition-transform duration-300 hover-animate"
+        ></NuxtImg>
+      </NuxtLink>
     </div>
   </div>
 </template>
