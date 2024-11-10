@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import useUserAlbums from "~/composables/useUserAlbums";
 import { ref, computed } from "vue";
 const { data } = useAuth();
 const router = useRouter();
@@ -7,6 +8,8 @@ const artworkTitle = ref("");
 const artworkDescription = ref("");
 const image = ref<File | null>(null);
 const imageUrl = ref<string | null>(null);
+const albums = await useUserAlbums(Number(data.value?.user.id));
+const selectedAlbum = ref<number | null>(null);
 
 const handleDrop = (e: DragEvent) => {
   const file = e.dataTransfer?.files[0];
@@ -32,6 +35,9 @@ const handleUpload = async (e: any) => {
     formData.append("description", artworkDescription.value);
     if (image.value) {
       formData.append("image", image.value);
+    }
+    if (selectedAlbum.value) {
+      formData.append("albumId", String(selectedAlbum.value));
     }
 
     for (const [k, v] of formData.entries()) {
@@ -110,6 +116,21 @@ definePageMeta({
           name="description"
           class="p-5 w-full h-32 rounded-sm mb-3 text-wrap"
         />
+        <label
+          for="album"
+          class="w-full p-1 text-left bg-textPrimary text-textSecondary"
+          >Assign to Album:</label
+        >
+        <select
+          v-model="selectedAlbum"
+          id="album"
+          name="album"
+          class="p-5 w-full rounded-sm mb-3"
+        >
+          <option v-for="album in albums" :key="album.id" :value="album.id">
+            {{ album.name }}
+          </option>
+        </select>
         <input
           type="submit"
           class="text-2xl cursor-pointer bg-textSecondary p-5 w-7/12 rounded-md hover:bg-textPrimary hover:text-textSecondary"

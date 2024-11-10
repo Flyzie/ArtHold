@@ -36,6 +36,7 @@ model Artwork {
 
 model Album {
     id               Int       @id @default(autoincrement())
+    name             String
     assignedArtworks Artwork[]
     userID           Int
     user             User      @relation(fields: [userID], references: [id]) // Add this line to establish the relationship

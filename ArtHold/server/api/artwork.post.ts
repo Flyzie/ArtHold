@@ -23,12 +23,13 @@ export default defineEventHandler(async (event) => {
     }
   );
 
-  const { userId, title, description } = fields;
+  const { userId, title, description, albumId } = fields;
   const artworkImage = files.image ? files.image.newFilename : null;
 
   const userID = Number(userId);
+  const albumID = Number(albumId);
 
-  if (!title || !description || !artworkImage) {
+  if (!title || !description || !artworkImage || !albumID) {
     throw createError({
       statusCode: 400,
       statusMessage: "You cant leave fields empty",
@@ -42,10 +43,11 @@ export default defineEventHandler(async (event) => {
     });
   }
 
-  const artworkData: any = { title, description };
-  if (artworkImage) {
-    artworkData.artworkImage = `/img/artworks/${artworkImage}`;
-  }
+  const artworkData: any = {
+    title,
+    description,
+    artworkImage: `/img/artworks/${artworkImage}`,
+  };
 
   const existingUser = await prisma.user.findUnique({
     where: { id: userID },
@@ -57,6 +59,9 @@ export default defineEventHandler(async (event) => {
         ...artworkData,
         user: {
           connect: { id: existingUser?.id },
+        },
+        album: {
+          connect: { id: albumID },
         },
       },
     });

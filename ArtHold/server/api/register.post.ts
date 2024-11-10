@@ -41,6 +41,21 @@ export default defineEventHandler(async (event) => {
     },
   });
 
+  try {
+    await prisma.album.create({
+      data: {
+        name: "default",
+        userID: user.id,
+      },
+    });
+  } catch (error) {
+    console.error("Error creating default album:", error);
+    throw createError({
+      statusCode: 500,
+      statusMessage: "Error creating default album",
+    });
+  }
+
   return {
     statusCode: 201,
     body: {

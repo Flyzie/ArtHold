@@ -28,8 +28,8 @@ const formattedDate = computed(() => {
 
 <template>
   <div class="grid grid-cols-3 grid-rows-1 w-full p-5 h-full gap-4">
-    <div class="col-span-2 h-full bg-secondary rounded-md">
-      HERE WILL BE USERS ALBUMS
+    <div class="col-span-2 h-full rounded-md">
+      <h1 class="text-white text-5xl">Portfolio</h1>
     </div>
     <div
       class="col-span-1 min-w-40 flex flex-col justify-center items-start p-5 gap-5 bg-secondary rounded-md"

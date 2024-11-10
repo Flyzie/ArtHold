@@ -28,7 +28,7 @@ const isUser = computed(() => {
     <div
       class="col-span-1 min-w-40 flex flex-col justify-start items-start p-5 gap-5 bg-secondary rounded-md"
     >
-      <div class="flex flex-wrap gap-2">
+      <div class="flex flex-wrap gap-6">
         <NuxtImg
           :src="userData?.image ?? ''"
           fit="cover"
