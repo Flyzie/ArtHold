@@ -1,13 +1,16 @@
-<script setup>
+<script setup lang="ts">
 import useAllArtworks from "~/composables/useAllArtworks";
 import useUser from "~/composables/useUser";
+import type { Artwork } from "@prisma/client";
 import { ref, onMounted } from "vue";
 
-const artworks = await useAllArtworks();
+const props = defineProps<{
+  artworks: Artwork[];
+}>();
 
 const hoveredImageId = ref(null);
 
-const toggleHovered = (id) => {
+const toggleHovered = (id: any) => {
   hoveredImageId.value = id;
 };
 
@@ -22,24 +25,24 @@ const clearHovered = () => {
   >
     <div
       v-for="artwork in artworks"
-      @mouseenter="toggleHovered(artwork.id)"
+      @mouseenter="toggleHovered(artwork?.id)"
       @mouseleave="clearHovered"
-      :key="artwork.id"
+      :key="artwork?.id"
       class="bg-textSecondary aspect-square overflow-hidden flex items-center justify-center rounded-md m-0 relative"
     >
       <div
         class="absolute origin-bottom-left bottom-0 p-2 left-0 bg-opacity-85 backdrop-blur-xl text-white animate-fade animate-once animate-duration-300 animate-ease-linear z-10 animate-normal"
-        v-if="hoveredImageId === artwork.id"
+        v-if="hoveredImageId === artwork?.id"
       >
         <h1 class="w-full text-wrap">{{ artwork.title }}</h1>
         <h2 class="w-full text-wrap">{{ artwork.user.name.toUpperCase() }}</h2>
       </div>
-      <NuxtLink :to="{ path: `/artwork/${artwork.id}` }">
+      <NuxtLink :to="{ path: `/artwork/${artwork?.id}` }">
         <NuxtImg
           width="500"
           height="500"
-          :src="artwork.artworkImage"
-          :alt="artwork.description"
+          :src="artwork?.artworkImage"
+          :alt="artwork?.description"
           class="w-full h-full object-cover rounded-md transition-transform duration-300 hover-animate"
         ></NuxtImg>
       </NuxtLink>

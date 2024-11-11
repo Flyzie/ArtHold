@@ -1,10 +1,15 @@
 <script setup lang="ts">
 import useUser from "~/composables/useUser";
+import useUserAlbums from "~/composables/useUserAlbums";
 const route = useRoute();
 
 const { status, data } = useAuth();
 
 const userData = await useUser(Number(route.params.userID));
+const userAlbums = await useUserAlbums(Number(route.params.userID));
+
+console.log(userAlbums.value);
+const hoveredImageId = ref(null);
 
 const isUser = computed(() => {
   if (data.value?.user.id === Number(route.params.userID)) {
@@ -28,11 +33,12 @@ const formattedDate = computed(() => {
 
 <template>
   <div class="grid grid-cols-3 grid-rows-1 w-full p-5 h-full gap-4">
-    <div class="col-span-2 h-full rounded-md">
-      <h1 class="text-white text-5xl">Portfolio</h1>
+    <div class="col-span-2">
+      <AlbumsGrid :albums="userAlbums"></AlbumsGrid>
+      <NuxtPage />
     </div>
     <div
-      class="col-span-1 min-w-40 flex flex-col justify-center items-start p-5 gap-5 bg-secondary rounded-md"
+      class="col-span-1 min-w-40 flex flex-col justify-start items-start p-5 gap-5 bg-secondary rounded-md"
     >
       <NuxtImg
         :src="userData?.image ?? ''"
