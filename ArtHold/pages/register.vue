@@ -9,6 +9,12 @@ const password = ref("");
 const confirmPassword = ref("");
 const router = useRouter();
 
+const passwordType = ref("password");
+
+const togglePasswordVisibility = () => {
+  passwordType.value = passwordType.value === "password" ? "text" : "password";
+};
+
 async function handleSignIn() {
   await signIn("credentials", {
     redirect: false,
@@ -47,6 +53,7 @@ const handleRegister = async () => {
     console.error("Registration failed:", error);
   }
 };
+
 definePageMeta({
   middleware: ["redirect-if-authenticated"],
 });
@@ -79,20 +86,25 @@ definePageMeta({
       />
       <input
         v-model="password"
-        type="text"
+        :type="passwordType"
         placeholder="password"
         id="password"
         name="password"
         class="p-5 w-full rounded-sm"
       />
+
       <input
         v-model="confirmPassword"
-        type="text"
+        :type="passwordType"
         placeholder="Confirm Password"
         id="confirmPassword"
         name="confirmPassword"
         class="p-5 w-full rounded-sm"
       />
+      <div class="w-full">
+        <label for="checkbox">Show Passwords</label>
+        <input class="ml-1" type="checkbox" @click="togglePasswordVisibility" />
+      </div>
       <input
         type="submit"
         class="text-2xl cursor-pointer bg-textSecondary p-5 w-7/12 rounded-md hover:bg-textPrimary hover:text-textSecondary"

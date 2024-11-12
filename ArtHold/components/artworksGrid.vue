@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import useAllArtworks from "~/composables/useAllArtworks";
-import useUser from "~/composables/useUser";
 import type { Artwork } from "@prisma/client";
 import { ref, onMounted } from "vue";
 
@@ -28,14 +27,14 @@ const clearHovered = () => {
       @mouseenter="toggleHovered(artwork?.id)"
       @mouseleave="clearHovered"
       :key="artwork?.id"
-      class="bg-textSecondary aspect-square overflow-hidden flex items-center justify-center rounded-md m-0 relative"
+      class="aspect-square overflow-hidden flex items-center justify-center rounded-md m-0 relative"
     >
       <div
         class="absolute origin-bottom-left bottom-0 p-2 left-0 bg-opacity-85 backdrop-blur-xl text-white animate-fade animate-once animate-duration-300 animate-ease-linear z-10 animate-normal"
         v-if="hoveredImageId === artwork?.id"
       >
-        <h1 class="w-full text-wrap">{{ artwork.title }}</h1>
-        <h2 class="w-full text-wrap">{{ artwork.user.name.toUpperCase() }}</h2>
+        <h1 class="w-full text-wrap">{{ artwork?.title }}</h1>
+        <h2 class="w-full text-wrap">{{ artwork?.user.name.toUpperCase() }}</h2>
       </div>
       <NuxtLink :to="{ path: `/artwork/${artwork?.id}` }">
         <NuxtImg

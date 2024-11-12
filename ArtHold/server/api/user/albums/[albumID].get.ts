@@ -17,7 +17,11 @@ export default defineEventHandler(async (event) => {
       id: Number(albumID),
     },
     include: {
-      assignedArtworks: true,
+      assignedArtworks: {
+        include: {
+          user: true,
+        },
+      },
     },
   });
 

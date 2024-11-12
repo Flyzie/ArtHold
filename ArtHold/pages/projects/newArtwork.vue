@@ -56,7 +56,7 @@ const handleUpload = async (e: any) => {
 
     const useData = await response.json();
     console.log("Artwork Created succesfully:", useData);
-    router.push(`/user/${data.value?.user.id}`);
+    router.push(`/${data.value?.user.id}`);
   } catch (error) {
     console.error("Artwork Creation failed", error);
   }

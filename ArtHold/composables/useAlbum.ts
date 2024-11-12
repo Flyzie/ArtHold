@@ -1,5 +1,9 @@
 import type { Album, Artwork } from "@prisma/client";
 
+interface ArtworkWithUser extends Artwork {
+  user: User;
+}
+
 interface AlbumWithArtworks extends Album {
   assignedArtworks: Artwork[];
 }

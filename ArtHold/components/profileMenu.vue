@@ -7,6 +7,10 @@ const isOpen = ref(false);
 const userName = computed(() => userData.value?.name || "");
 const userImage = computed(() => userData.value?.image || "");
 
+const profileImage = computed(() => {
+  return userImage.value ? userImage.value : "/logo.png";
+});
+
 const toggleDropdown = () => {
   isOpen.value = !isOpen.value;
 };
@@ -44,7 +48,7 @@ onBeforeUnmount(() => {
       aria-expanded="true"
     >
       <NuxtImg
-        :src="userImage"
+        :src="profileImage"
         fit="cover"
         width="50"
         height="50"
@@ -61,7 +65,7 @@ onBeforeUnmount(() => {
         class="p-4 min-h-20 flex justify-start items-center bg-cover bg-center bg-textPrimary"
       >
         <NuxtImg
-          :src="userImage"
+          :src="profileImage"
           fit="cover"
           width="100"
           height="100"
@@ -77,7 +81,7 @@ onBeforeUnmount(() => {
           alt="Upload"
           class="w-6 h-max"
         />
-        <NuxtLink :to="{ path: `/user/${data?.user.id}` }">My Profile</NuxtLink>
+        <NuxtLink :to="{ path: `/${data?.user.id}` }">My Profile</NuxtLink>
       </div>
       <div
         class="p-2 gap-8 flex justify-start items-center hover:bg-primary hover:text-textSecondary"

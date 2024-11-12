@@ -8,7 +8,10 @@ const { status, data } = useAuth();
 const userData = await useUser(Number(route.params.userID));
 const userAlbums = await useUserAlbums(Number(route.params.userID));
 
-console.log(userAlbums.value);
+const profileImage = computed(() => {
+  return userData?.value?.image ? userData?.value?.image : "/logo.png";
+});
+
 const hoveredImageId = ref(null);
 
 const isUser = computed(() => {
@@ -32,16 +35,20 @@ const formattedDate = computed(() => {
 </script>
 
 <template>
-  <div class="grid grid-cols-3 grid-rows-1 w-full p-5 h-full gap-4">
+  <div class="grid grid-cols-3 grid-rows-1 w-full p-5 gap-4">
     <div class="col-span-2">
-      <AlbumsGrid :albums="userAlbums"></AlbumsGrid>
-      <NuxtPage />
+      <AlbumsGrid :albums="userAlbums" class="mb-2"></AlbumsGrid>
+      <div>
+        <NuxtPage
+          class="animate-fade-right animate-once animate-duration-100 animate-ease-linear animate-normal"
+        />
+      </div>
     </div>
     <div
       class="col-span-1 min-w-40 flex flex-col justify-start items-start p-5 gap-5 bg-secondary rounded-md"
     >
       <NuxtImg
-        :src="userData?.image ?? ''"
+        :src="profileImage"
         fit="cover"
         width="500"
         height="500"
