@@ -1,5 +1,6 @@
 // ArtHold/server/api/register.post.ts
 import { PrismaClient } from "@prisma/client";
+import bcrypt from "bcrypt";
 
 const prisma = new PrismaClient();
 
@@ -32,12 +33,14 @@ export default defineEventHandler(async (event) => {
       statusMessage: "User already exists",
     });
   }
+  const saltRounds = 10;
+  const hashedPassword = await bcrypt.hash(password, saltRounds);
 
   const user = await prisma.user.create({
     data: {
       name,
       email,
-      password,
+      password: hashedPassword,
     },
   });
 

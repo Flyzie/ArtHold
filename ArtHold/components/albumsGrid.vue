@@ -21,30 +21,27 @@ const clearHovered = () => {
 };
 
 const handleUpload = async (e: any) => {
-  try {
-    const formData = new FormData();
-    formData.append("name", albumName.value);
-    formData.append("userId", String(data.value?.user.id));
+  e.preventDefault();
+  const formData = new FormData();
+  formData.append("name", albumName.value);
+  formData.append("userId", String(data.value?.user.id));
 
-    for (const [k, v] of formData.entries()) {
-      console.log(k, v);
-    }
-
-    const response = await fetch("/api/albums/album", {
-      method: "POST",
-      body: formData,
-    });
-
-    if (!response.ok) {
-      const error = await response.json();
-      throw new Error(error.statusMessage);
-    }
-
-    const useData = await response.json();
-    console.log("Album Created succesfully:", useData);
-  } catch (error) {
-    console.error("Album Creation failed", error);
+  for (const [k, v] of formData.entries()) {
+    console.log(k, v);
   }
+
+  const response = await fetch("/api/albums/album", {
+    method: "POST",
+    body: formData,
+  });
+
+  if (!response.ok) {
+    const error = await response.json();
+    throw new Error(error.statusMessage);
+  }
+
+  const useData = await response.json();
+  console.log("Album Created succesfully:", useData);
 };
 </script>
 

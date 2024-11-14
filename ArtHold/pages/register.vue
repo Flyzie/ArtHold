@@ -25,33 +25,29 @@ async function handleSignIn() {
 }
 
 const handleRegister = async () => {
-  try {
-    const response = await fetch("/api/register", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        name: name.value,
-        email: email.value,
-        password: password.value,
-        confirmPassword: confirmPassword.value,
-      }),
-    });
+  const response = await fetch("/api/register", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+      name: name.value,
+      email: email.value,
+      password: password.value,
+      confirmPassword: confirmPassword.value,
+    }),
+  });
 
-    if (!response.ok) {
-      const error = await response.json();
-      throw new Error(error.statusMessage);
-    }
-
-    const data = await response.json();
-    console.log("User created successfully:", data);
-
-    // Redirect to login page after successful registration
-    handleSignIn();
-  } catch (error) {
-    console.error("Registration failed:", error);
+  if (!response.ok) {
+    const error = await response.json();
+    throw new Error(error.statusMessage);
   }
+
+  const data = await response.json();
+  console.log("User created successfully:", data);
+
+  // Redirect to login page after successful registration
+  handleSignIn();
 };
 
 definePageMeta({
@@ -78,7 +74,7 @@ definePageMeta({
       />
       <input
         v-model="email"
-        type="text"
+        type="email"
         placeholder="email"
         id="email"
         name="email"
@@ -102,7 +98,7 @@ definePageMeta({
         class="p-5 w-full rounded-sm"
       />
       <div class="w-full">
-        <label for="checkbox">Show Passwords</label>
+        <label for="checkbox" class="text-white">Show Passwords</label>
         <input class="ml-1" type="checkbox" @click="togglePasswordVisibility" />
       </div>
       <input
@@ -113,7 +109,7 @@ definePageMeta({
     </form>
     <hr class="w-full my-4 border-t-2 border-textSecondary" />
     <div class="flex gap-2">
-      <p class="text-textPrimary">Already have an account?</p>
+      <p class="text-white">Already have an account?</p>
       <NuxtLink class="text-textSecondary" :to="{ name: 'login' }"
         >Login Here!</NuxtLink
       >

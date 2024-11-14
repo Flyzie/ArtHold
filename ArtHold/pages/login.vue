@@ -24,7 +24,7 @@ definePageMeta({
     >
       <input
         v-model="email"
-        type="text"
+        type="email"
         placeholder="email"
         id="email"
         name="email"

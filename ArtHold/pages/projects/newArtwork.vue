@@ -28,38 +28,34 @@ const handleFileChange = (event: Event) => {
 };
 
 const handleUpload = async (e: any) => {
-  try {
-    const formData = new FormData();
-    formData.append("userId", String(data.value?.user.id));
-    formData.append("title", artworkTitle.value);
-    formData.append("description", artworkDescription.value);
-    if (image.value) {
-      formData.append("image", image.value);
-    }
-    if (selectedAlbum.value) {
-      formData.append("albumId", String(selectedAlbum.value));
-    }
-
-    for (const [k, v] of formData.entries()) {
-      console.log(k, v);
-    }
-
-    const response = await fetch("/api/artwork", {
-      method: "POST",
-      body: formData,
-    });
-
-    if (!response.ok) {
-      const error = await response.json();
-      throw new Error(error.statusMessage);
-    }
-
-    const useData = await response.json();
-    console.log("Artwork Created succesfully:", useData);
-    router.push(`/${data.value?.user.id}`);
-  } catch (error) {
-    console.error("Artwork Creation failed", error);
+  const formData = new FormData();
+  formData.append("userId", String(data.value?.user.id));
+  formData.append("title", artworkTitle.value);
+  formData.append("description", artworkDescription.value);
+  if (image.value) {
+    formData.append("image", image.value);
   }
+  if (selectedAlbum.value) {
+    formData.append("albumId", String(selectedAlbum.value));
+  }
+
+  for (const [k, v] of formData.entries()) {
+    console.log(k, v);
+  }
+
+  const response = await fetch("/api/artwork", {
+    method: "POST",
+    body: formData,
+  });
+
+  if (!response.ok) {
+    const error = await response.json();
+    throw new Error(error.statusMessage);
+  }
+
+  const useData = await response.json();
+  console.log("Artwork Created succesfully:", useData);
+  router.push(`/${data.value?.user.id}`);
 };
 
 definePageMeta({
@@ -127,7 +123,12 @@ definePageMeta({
           name="album"
           class="p-5 w-full rounded-sm mb-3"
         >
-          <option v-for="album in albums" :key="album.id" :value="album.id">
+          <option
+            v-for="album in albums"
+            :key="album.id"
+            :value="album.id"
+            class="rounded-sm"
+          >
             {{ album.name }}
           </option>
         </select>

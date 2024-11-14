@@ -14,6 +14,7 @@ export default {
       secondary: "#48234d",
       textPrimary: "#070809",
       textSecondary: "#edf487",
+      errorRed: "#fc0352",
       blue: "#1fb6ff",
       pink: "#ff49db",
       orange: "#ff7849",

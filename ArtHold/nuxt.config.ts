@@ -22,6 +22,7 @@ export default defineNuxtConfig({
     "@nuxt/icon",
     "nuxt-file-storage",
     "@vueuse/nuxt",
+    "@cssninja/nuxt-toaster",
   ],
   auth: {
     globalAppMiddleware: false,

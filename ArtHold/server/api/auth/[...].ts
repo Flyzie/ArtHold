@@ -3,6 +3,7 @@ import { NuxtAuthHandler } from "#auth";
 import CredentialsProvider from "next-auth/providers/credentials";
 import { PrismaAdapter } from "@next-auth/prisma-adapter";
 import { PrismaClient } from "@prisma/client";
+import bcrypt from "bcrypt";
 
 const prisma = new PrismaClient();
 
@@ -27,11 +28,14 @@ export default NuxtAuthHandler({
         const user = await prisma.user.findUnique({
           where: { email: credentials.email },
         });
-        if (user && credentials.password === user.password) {
+        if (
+          user &&
+          (await bcrypt.compare(credentials.password, user.password))
+        ) {
           console.log(user);
           return user;
         } else {
-          return null;
+          throw new Error("Invalid credentials");
         }
       },
     }),

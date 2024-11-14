@@ -30,7 +30,7 @@ const toggleActive = () => {
         id="fileInput"
         name="fileInput"
         type="file"
-        accept=".jpg, .png"
+        accept="image/*"
       />
     </div>
   </div>
