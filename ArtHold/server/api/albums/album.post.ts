@@ -6,6 +6,7 @@ import fs from "fs";
 const prisma = new PrismaClient();
 
 export default defineEventHandler(async (event) => {
+  await protectRoute(event);
   const form = formidable({
     multiples: false,
   });

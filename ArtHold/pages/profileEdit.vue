@@ -13,6 +13,36 @@ const description = ref(userData.value?.description || "");
 const image = ref<File | null>(null);
 //const image = ref(userData.value?.image);
 
+const errors = ref({
+  nameError: false,
+  descriptionError: false,
+  imageError: false,
+});
+
+const formSubmitted = ref(false);
+
+watch([name, description, image], () => {
+  if (formSubmitted.value) {
+    checkForErrors();
+  }
+});
+
+const checkForErrors = () => {
+  errors.value.nameError = false;
+  errors.value.descriptionError = false;
+  errors.value.imageError = false;
+
+  if (name.value === "") {
+    errors.value.nameError = true;
+  }
+  if (image.value === null) {
+    errors.value.imageError = true;
+  }
+  if (description.value === "") {
+    errors.value.descriptionError = true;
+  }
+};
+
 const handleFileChange = (event: Event) => {
   const target = event.target as HTMLInputElement;
   if (target.files && target.files[0]) {
@@ -21,6 +51,8 @@ const handleFileChange = (event: Event) => {
 };
 
 const handleEdit = async (e: any) => {
+  formSubmitted.value = true;
+  checkForErrors();
   const formData = new FormData(this);
   formData.append("id", String(data.value?.user.id));
   formData.append("name", name.value);
@@ -76,6 +108,7 @@ definePageMeta({
         name="file"
         class="p-5 w-full rounded-sm"
         @change="handleFileChange"
+        :class="{ errorState: errors.imageError }"
       />
       <label
         for="name"
@@ -89,6 +122,7 @@ definePageMeta({
         id="name"
         name="name"
         class="p-5 w-full rounded-sm"
+        :class="{ errorState: errors.nameError }"
       />
       <label
         for="description"
@@ -102,6 +136,7 @@ definePageMeta({
         id="description"
         name="description"
         class="p-5 w-full rounded-sm"
+        :class="{ errorState: errors.descriptionError }"
       />
       <input
         type="submit"
@@ -112,4 +147,8 @@ definePageMeta({
     <hr class="w-full my-4 border-t-2 border-textSecondary" />
   </div>
 </template>
-<style scoped></style>
+<style scoped>
+.errorState {
+  border: 0.25rem, solid, #fc0352;
+}
+</style>

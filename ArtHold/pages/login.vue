@@ -8,6 +8,31 @@ async function handleSignIn() {
   await signIn("github");
 }
 
+const errors = ref({
+  emailError: false,
+  passwordError: false,
+});
+
+const formSubmitted = ref(false);
+
+watch([email, password], () => {
+  if (formSubmitted.value) {
+    checkForErrors();
+  }
+});
+
+const checkForErrors = () => {
+  errors.value.emailError = false;
+  errors.value.passwordError = false;
+
+  if (email.value === "") {
+    errors.value.emailError = true;
+  }
+  if (password.value === null) {
+    errors.value.passwordError = true;
+  }
+};
+
 definePageMeta({
   middleware: ["redirect-if-authenticated"],
 });
@@ -29,6 +54,7 @@ definePageMeta({
         id="email"
         name="email"
         class="p-5 w-full rounded-sm"
+        :class="{ errorState: errors.emailError }"
       />
       <input
         v-model="password"
@@ -37,6 +63,7 @@ definePageMeta({
         id="password"
         name="password"
         class="p-5 w-full rounded-sm"
+        :class="{ errorState: errors.passwordError }"
       />
       <input
         type="submit"
@@ -61,4 +88,8 @@ definePageMeta({
   </div>
 </template>
 
-<style scoped></style>
+<style scoped>
+.errorState {
+  border: 0.25rem, solid, #fc0352;
+}
+</style>

@@ -24,7 +24,47 @@ async function handleSignIn() {
   window.location.reload();
 }
 
+const errors = ref({
+  nameError: false,
+  emailError: false,
+  passwordError: false,
+  matchPasswordError: false,
+});
+
+const formSubmitted = ref(false);
+
+watch([email, password, confirmPassword, name], () => {
+  if (formSubmitted.value) {
+    checkForErrors();
+  }
+});
+
+const checkForErrors = () => {
+  errors.value.nameError = false;
+  errors.value.emailError = false;
+  errors.value.passwordError = false;
+  errors.value.matchPasswordError = false;
+
+  if (name.value === "") {
+    errors.value.nameError = true;
+  }
+  if (email.value === "") {
+    errors.value.emailError = true;
+  }
+  if (password.value === "") {
+    errors.value.passwordError = true;
+  }
+  if (
+    password.value !== confirmPassword.value ||
+    confirmPassword.value === ""
+  ) {
+    errors.value.matchPasswordError = true;
+  }
+};
+
 const handleRegister = async () => {
+  formSubmitted.value = true;
+  checkForErrors();
   const response = await fetch("/api/register", {
     method: "POST",
     headers: {
@@ -71,6 +111,7 @@ definePageMeta({
         id="name"
         name="name"
         class="p-5 w-full rounded-sm"
+        :class="{ errorState: errors.nameError }"
       />
       <input
         v-model="email"
@@ -79,6 +120,7 @@ definePageMeta({
         id="email"
         name="email"
         class="p-5 w-full rounded-sm"
+        :class="{ errorState: errors.emailError }"
       />
       <input
         v-model="password"
@@ -87,6 +129,9 @@ definePageMeta({
         id="password"
         name="password"
         class="p-5 w-full rounded-sm"
+        :class="{
+          errorState: errors.passwordError || errors.matchPasswordError,
+        }"
       />
 
       <input
@@ -96,6 +141,7 @@ definePageMeta({
         id="confirmPassword"
         name="confirmPassword"
         class="p-5 w-full rounded-sm"
+        :class="{ errorState: errors.matchPasswordError }"
       />
       <div class="w-full">
         <label for="checkbox" class="text-white">Show Passwords</label>
@@ -117,4 +163,8 @@ definePageMeta({
   </div>
 </template>
 
-<style scoped></style>
+<style scoped>
+.errorState {
+  border: 0.25rem, solid, #fc0352;
+}
+</style>

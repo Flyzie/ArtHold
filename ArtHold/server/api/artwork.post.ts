@@ -2,13 +2,21 @@
 import { PrismaClient } from "@prisma/client";
 import formidable from "formidable";
 import fs from "fs";
+import path from "path";
 
 const prisma = new PrismaClient();
 
+const uploadDir = path.join(process.cwd(), "/public/img/artworks");
+
+if (!fs.existsSync(uploadDir)) {
+  fs.mkdirSync(uploadDir, { recursive: true });
+}
+
 export default defineEventHandler(async (event) => {
+  await protectRoute(event);
   const form = formidable({
     multiples: false,
-    uploadDir: "./public/img/artworks/",
+    uploadDir: uploadDir,
     keepExtensions: true,
   });
 

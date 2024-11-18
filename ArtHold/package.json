@@ -31,6 +31,7 @@
   "devDependencies": {
     "@cssninja/nuxt-toaster": "^0.3.12",
     "@tailwindcss/typography": "^0.5.15",
+    "@types/bcrypt": "^5.0.2",
     "@types/formidable": "^3.4.5",
     "autoprefixer": "^10.4.20",
     "nuxt-file-storage": "^0.2.8",

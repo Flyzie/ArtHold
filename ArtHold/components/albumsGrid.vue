@@ -21,7 +21,6 @@ const clearHovered = () => {
 };
 
 const handleUpload = async (e: any) => {
-  e.preventDefault();
   const formData = new FormData();
   formData.append("name", albumName.value);
   formData.append("userId", String(data.value?.user.id));

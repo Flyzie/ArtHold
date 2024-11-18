@@ -2,13 +2,21 @@
 import { PrismaClient } from "@prisma/client";
 import formidable from "formidable";
 import fs from "fs";
+import path from "path";
 
 const prisma = new PrismaClient();
 
 export default defineEventHandler(async (event) => {
+  await protectRoute(event);
+  const uploadDir = path.join(process.cwd(), "/public/img/profilePics");
+
+  if (!fs.existsSync(uploadDir)) {
+    fs.mkdirSync(uploadDir, { recursive: true });
+  }
+
   const form = formidable({
     multiples: false,
-    uploadDir: "./public/img/profilePics/",
+    uploadDir: uploadDir,
     keepExtensions: true,
   });
 
@@ -59,15 +67,14 @@ export default defineEventHandler(async (event) => {
   }
 
   if (existingUser.image) {
-    fs.unlink(`public/${existingUser.image}`, (err) => {
-      if (err) {
-        console.log("Unable to delete existing image or it doesnt exist", err);
-      } else {
-        console.log(`deleting file: /img/profilePics/${existingUser.image}`);
-      }
-    });
+    const imagePath = existingUser.image;
+    try {
+      fs.unlinkSync(imagePath);
+      console.log(`Deleted file: ${imagePath}`);
+    } catch (err) {
+      console.log("Unable to delete existing image or it doesn't exist", err);
+    }
   }
-
   try {
     const updatedUser = await prisma.user.update({
       where: { id: userId },

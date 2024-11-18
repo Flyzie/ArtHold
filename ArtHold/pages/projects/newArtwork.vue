@@ -11,6 +11,36 @@ const imageUrl = ref<string | null>(null);
 const albums = await useUserAlbums(Number(data.value?.user.id));
 const selectedAlbum = ref<number | null>(null);
 
+const errors = ref({
+  titleError: false,
+  descriptionError: false,
+  imageError: false,
+});
+
+const formSubmitted = ref(false);
+
+watch([artworkTitle, artworkDescription, image], () => {
+  if (formSubmitted.value) {
+    checkForErrors();
+  }
+});
+
+const checkForErrors = () => {
+  errors.value.titleError = false;
+  errors.value.descriptionError = false;
+  errors.value.imageError = false;
+
+  if (artworkTitle.value === "") {
+    errors.value.titleError = true;
+  }
+  if (image.value === null) {
+    errors.value.imageError = true;
+  }
+  if (artworkDescription.value === "") {
+    errors.value.descriptionError = true;
+  }
+};
+
 const handleDrop = (e: DragEvent) => {
   const file = e.dataTransfer?.files[0];
   if (file) {
@@ -28,6 +58,8 @@ const handleFileChange = (event: Event) => {
 };
 
 const handleUpload = async (e: any) => {
+  formSubmitted.value = true;
+  checkForErrors();
   const formData = new FormData();
   formData.append("userId", String(data.value?.user.id));
   formData.append("title", artworkTitle.value);
@@ -81,12 +113,14 @@ definePageMeta({
           id="title"
           name="title"
           class="p-5 w-full rounded-sm mb-3"
+          :class="{ errorState: errors.titleError }"
         />
         <dropZone
           text="Click or drop your artwork here"
           @drop.prevent="handleDrop"
           @change="handleFileChange"
           class="mb-3"
+          :class="{ errorState: errors.imageError }"
         ></dropZone>
         <div
           v-if="imageUrl"
@@ -111,6 +145,7 @@ definePageMeta({
           id="description"
           name="description"
           class="p-5 w-full h-32 rounded-sm mb-3 text-wrap"
+          :class="{ errorState: errors.descriptionError }"
         />
         <label
           for="album"
@@ -141,4 +176,8 @@ definePageMeta({
     </div>
   </div>
 </template>
-<style scoped></style>
+<style scoped>
+.errorState {
+  border: 0.25rem, solid, #fc0352;
+}
+</style>

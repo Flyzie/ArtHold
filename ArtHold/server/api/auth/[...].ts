@@ -35,7 +35,10 @@ export default NuxtAuthHandler({
           console.log(user);
           return user;
         } else {
-          throw new Error("Invalid credentials");
+          throw createError({
+            statusCode: 400,
+            statusMessage: "Passwords do not match",
+          });
         }
       },
     }),
