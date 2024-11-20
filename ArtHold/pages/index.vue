@@ -1,8 +1,37 @@
 <script setup lang="ts">
-const { data } = await useFetch("/api/me");
+import type { Artwork } from "@prisma/client";
 import useAllArtworks from "~/composables/useAllArtworks";
+const route = useRoute();
+const allArtworks = await useAllArtworks();
 
-const artworks = await useAllArtworks();
+const artworks = ref(allArtworks.value);
+
+const handleSearch = async () => {
+  console.log("watcher triggered");
+  const query = route.query.query as string;
+
+  if (query) {
+    console.log("query detected triggered getting filtered");
+    const { data, error } = await useFetch<Artwork[]>(
+      `/api/search?q=${encodeURIComponent(query)}`,
+      {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      }
+    );
+
+    if (error.value) {
+      throw error.value;
+    }
+    artworks.value = data.value;
+  } else {
+    console.log("query not triggered rendering all");
+    artworks.value = allArtworks.value;
+  }
+};
+watch(() => route.fullPath, handleSearch, { immediate: true });
 </script>
 <template>
   <div class="p-4 px-6 w-full">

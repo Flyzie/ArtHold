@@ -1,7 +1,7 @@
 import type { Artwork } from "@prisma/client";
 
 export default async () => {
-  const { data, error } = await useFetch<Artwork>(`/api/artworks`, {
+  const { data, error } = await useFetch<Artwork[]>(`/api/artworks`, {
     lazy: true,
   });
 

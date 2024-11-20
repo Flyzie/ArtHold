@@ -26,7 +26,7 @@ const loggedIn = computed(() => status.value === "authenticated");
         </div>
       </div>
       <NuxtLink
-        :to="{ path: '/' }"
+        :to="{ path: `/` }"
         class="absolute left-1/2 transform -translate-x-1/2"
       >
         <NuxtImg src="/logo.png" alt="site logo" class="w-12 h-max" />
