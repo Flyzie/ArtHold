@@ -18,7 +18,10 @@ const updateQueryInURL = useDebounceFn(() => {
 }, 300);
 
 const saveQuery = useDebounceFn((query: string) => {
-  if (searchHistory.value.find((element) => element === query)) {
+  if (
+    searchHistory.value.find((element) => element === query) ||
+    input.value.length < 4
+  ) {
     return;
   }
   if (searchHistory.value.length > 5) {
@@ -39,6 +42,12 @@ const inputFromHistory = (queryListing: string) => {
   input.value = queryListing;
   updateQueryInURL();
 };
+
+const filteredSuggestions = computed(() => {
+  const query = input.value.toLowerCase();
+  const regex = new RegExp(query, "i");
+  return searchHistory.value.filter((item) => regex.test(item));
+});
 
 onMounted(() => {
   loadSearchHistory();
@@ -66,7 +75,7 @@ onMounted(() => {
       class="bg-textSecondary absolute mt-1 rounded-sm min-w-44"
     >
       <li
-        v-for="(query, index) in searchHistory.slice().reverse()"
+        v-for="(query, index) in filteredSuggestions.slice().reverse()"
         :key="index"
         @mousedown="inputFromHistory(query)"
         @hover="isActive = true"
