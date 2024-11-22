@@ -66,11 +66,12 @@ export default defineEventHandler(async (event) => {
     });
   }
 
-  if (existingUser.image) {
+  if (existingUser.image && updateData.image) {
     const imagePath = existingUser.image;
     try {
-      fs.unlinkSync(imagePath);
-      console.log(`Deleted file: ${imagePath}`);
+      const deleteDir = path.join(process.cwd(), "public", imagePath);
+      fs.unlinkSync(deleteDir);
+      console.log(`Deleted file: ${deleteDir}`);
     } catch (err) {
       console.log("Unable to delete existing image or it doesn't exist", err);
     }

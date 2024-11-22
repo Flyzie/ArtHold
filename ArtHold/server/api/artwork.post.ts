@@ -31,11 +31,12 @@ export default defineEventHandler(async (event) => {
     }
   );
 
-  const { userId, title, description, albumId } = fields;
+  const { userId, title, description, albumId, tags } = fields;
   const artworkImage = files.image ? files.image.newFilename : null;
 
   const userID = Number(userId);
   const albumID = Number(albumId);
+  const tagIDs = tags ? JSON.parse(tags) : [];
 
   if (!title || !description || !artworkImage || !albumID) {
     throw createError({
@@ -70,6 +71,9 @@ export default defineEventHandler(async (event) => {
         },
         album: {
           connect: { id: albumID },
+        },
+        assignedTags: {
+          connect: tagIDs.map((tagId: number) => ({ id: tagId })),
         },
       },
     });

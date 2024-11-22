@@ -3,6 +3,7 @@ import useUserAlbums from "~/composables/useUserAlbums";
 import { ref, computed } from "vue";
 const { data } = useAuth();
 const router = useRouter();
+const tags = await useTags();
 
 const artworkTitle = ref("");
 const artworkDescription = ref("");
@@ -10,6 +11,7 @@ const image = ref<File | null>(null);
 const imageUrl = ref<string | null>(null);
 const albums = await useUserAlbums(Number(data.value?.user.id));
 const selectedAlbum = ref<number | null>(null);
+const selectedTags = ref<{ id: number; name: string }[]>([]);
 
 const errors = ref({
   titleError: false,
@@ -70,6 +72,12 @@ const handleUpload = async (e: any) => {
   if (selectedAlbum.value) {
     formData.append("albumId", String(selectedAlbum.value));
   }
+  if (selectedTags.value.length) {
+    formData.append(
+      "tags",
+      JSON.stringify(selectedTags.value.map((tag) => tag.id))
+    );
+  }
 
   for (const [k, v] of formData.entries()) {
     console.log(k, v);
@@ -88,6 +96,12 @@ const handleUpload = async (e: any) => {
   const useData = await response.json();
   console.log("Artwork Created succesfully:", useData);
   router.push(`/${data.value?.user.id}`);
+};
+
+const addTag = (tag: { id: number; name: string }) => {
+  if (!selectedTags.value.find((t) => t.id === tag.id)) {
+    selectedTags.value.push(tag);
+  }
 };
 
 definePageMeta({
@@ -167,6 +181,19 @@ definePageMeta({
             {{ album.name }}
           </option>
         </select>
+        <div class="flex justify-center gap-2 mb-2">
+          <TagList
+            component-name="select tags: "
+            @update:selected-tag="addTag"
+          ></TagList>
+          <h1
+            v-for="tag in selectedTags"
+            :key="tag.id"
+            class="p-2 bg-textSecondary text-textPrimary rounded-sm"
+          >
+            {{ tag.name }}
+          </h1>
+        </div>
         <input
           type="submit"
           class="text-2xl cursor-pointer bg-textSecondary p-5 w-7/12 rounded-md hover:bg-textPrimary hover:text-textSecondary"

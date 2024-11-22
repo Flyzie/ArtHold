@@ -32,6 +32,7 @@ model Artwork {
     album        Album? @relation(fields: [albumID], references: [id])
     userID       Int
     user         User   @relation(fields: [userID], references: [id])
+    assignedTags Tag[]  @relation("ArtworkTags")
 }
 
 model Album {
@@ -40,4 +41,10 @@ model Album {
     assignedArtworks Artwork[]
     userID           Int
     user             User      @relation(fields: [userID], references: [id]) // Add this line to establish the relationship
+}
+
+model Tag {
+    id       Int       @id @default(autoincrement())
+    name     String    @unique
+    artworks Artwork[] @relation("ArtworkTags")
 }

@@ -24,6 +24,7 @@ const loggedIn = computed(() => status.value === "authenticated");
         <div class="hidden md:block">
           <SearchBar />
         </div>
+        <tagList component-name="Filter By:"></tagList>
       </div>
       <NuxtLink
         :to="{ path: `/` }"
@@ -31,6 +32,7 @@ const loggedIn = computed(() => status.value === "authenticated");
       >
         <NuxtImg src="/logo.png" alt="site logo" class="w-12 h-max" />
       </NuxtLink>
+
       <NuxtLink
         v-if="!loggedIn"
         class="p-3 bg-textSecondary text-textPrimary rounded-md"
