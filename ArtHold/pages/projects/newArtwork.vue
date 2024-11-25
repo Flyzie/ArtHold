@@ -182,10 +182,10 @@ definePageMeta({
           </option>
         </select>
         <div class="flex justify-center gap-2 mb-2">
-          <TagList
+          <TagSelect
             component-name="select tags: "
             @update:selected-tag="addTag"
-          ></TagList>
+          ></TagSelect>
           <h1
             v-for="tag in selectedTags"
             :key="tag.id"

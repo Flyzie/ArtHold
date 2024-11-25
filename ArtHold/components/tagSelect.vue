@@ -9,16 +9,12 @@ const props = defineProps({
     type: String,
     required: true,
   },
+  selectedTag: {
+    type: String,
+  },
 });
 
-const updateQueryInURL = () => {
-  const currentQuery = router.currentRoute.value.query;
-  const tagFilter = selectedTag.value;
-  const newQuery = { ...currentQuery, tags: tagFilter };
-  if (tagFilter) {
-    router.push({ query: newQuery });
-  }
-};
+const emit = defineEmits(["update:selectedTag"]);
 
 const toggleDropdown = () => {
   isOpen.value = !isOpen.value;
@@ -32,8 +28,8 @@ const closeDropdown = (event: any) => {
 
 const setTag = (tag: { id: number; name: string }) => {
   selectedTag.value = tag.name;
-  updateQueryInURL();
   isOpen.value = false;
+  emit("update:selectedTag", tag);
 };
 
 onMounted(() => {

@@ -4,11 +4,24 @@ const prisma = new PrismaClient();
 
 export default defineEventHandler(async (event) => {
   const query = getQuery(event);
-  const { q } = query;
+  const { q, tags } = query;
 
   try {
     const artworks = await prisma.artwork.findMany({
-      where: { title: { contains: q as string, mode: "insensitive" } },
+      where: {
+        AND: [
+          { title: { contains: q as string, mode: "insensitive" } },
+          tags
+            ? {
+                assignedTags: {
+                  some: {
+                    name: tags as string,
+                  },
+                },
+              }
+            : {},
+        ],
+      },
       include: {
         user: {
           select: {

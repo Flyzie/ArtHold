@@ -11,8 +11,11 @@ const isActive = ref(false);
 
 const updateQueryInURL = useDebounceFn(() => {
   const query = input.value.trim();
+  const currentQuery = router.currentRoute.value.query;
+  const newQuery = { ...currentQuery, query };
+
   if (query) {
-    router.push({ query: { query } });
+    router.push({ query: newQuery });
     saveQuery(query);
   }
 }, 300);

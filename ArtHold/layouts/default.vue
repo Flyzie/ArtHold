@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import ProfileMenu from "~/components/profileMenu.vue";
 
-const { status, signIn, signOut } = useAuth();
+const { status } = useAuth();
 
 const loggedIn = computed(() => status.value === "authenticated");
 </script>

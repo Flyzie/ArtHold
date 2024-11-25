@@ -7,16 +7,16 @@ const allArtworks = await useAllArtworks();
 const artworks = ref(allArtworks.value);
 
 const handleSearch = async () => {
-  //console.log("watcher triggered");
+  console.log("watcher triggered");
   const query = route.query.query as string;
   const tags = route.query.tags as string;
 
-  const tagIds = tags ? tags.split(",").map(Number) : [];
-
-  if (query || tagIds.length) {
-    //console.log("query detected triggered getting filtered");
+  if (query || tags) {
+    console.log("query detected triggered getting filtered");
     const { data, error } = await useFetch<Artwork[]>(
-      `/api/search?q=${encodeURIComponent(query)}`,
+      `/api/search?q=${encodeURIComponent(
+        query || ""
+      )}&tags=${encodeURIComponent(tags || "")}`,
       {
         method: "GET",
         headers: {
@@ -30,7 +30,7 @@ const handleSearch = async () => {
     }
     artworks.value = data.value;
   } else {
-    //console.log("query not triggered rendering all");
+    console.log("query not triggered rendering all");
     artworks.value = allArtworks.value;
   }
 };
