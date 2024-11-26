@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import useAllArtworks from "~/composables/useAllArtworks";
 import type { Artwork } from "@prisma/client";
 import { ref, onMounted } from "vue";
 
@@ -7,8 +6,10 @@ const props = defineProps<{
   artworks: Artwork[];
 }>();
 
+const emit = defineEmits(["intersected"]);
+
 const hoveredImageId = ref(null);
-const artworkLink = ref("");
+const intersectionDiv = ref(null);
 
 const toggleHovered = (id: any) => {
   hoveredImageId.value = id;
@@ -17,6 +18,28 @@ const toggleHovered = (id: any) => {
 const clearHovered = () => {
   hoveredImageId.value = null;
 };
+
+const observerTriggered = (entries: IntersectionObserverEntry[]) => {
+  if (entries[0].isIntersecting) {
+    console.log("Observer Triggered");
+    emit("intersected");
+  }
+};
+
+onMounted(() => {
+  const options = {
+    root: null,
+    rootMargin: "0px",
+    threshold: 0.2,
+  };
+
+  const observer = new IntersectionObserver(observerTriggered, options);
+  watch(intersectionDiv, (newVal) => {
+    if (newVal) {
+      observer.observe(newVal);
+    }
+  });
+});
 </script>
 
 <template>
@@ -46,6 +69,13 @@ const clearHovered = () => {
           class="w-full h-full object-cover rounded-md transition-transform duration-300 hover-animate"
         ></NuxtImg>
       </a>
+    </div>
+    <div
+      v-if="artworks.length"
+      ref="intersectionDiv"
+      class="bg-orange aspect-square overflow-hidden flex items-center justify-center rounded-md m-0 relative"
+    >
+      intersection observer
     </div>
   </div>
 </template>

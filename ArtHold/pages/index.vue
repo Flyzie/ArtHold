@@ -1,43 +1,61 @@
 <script setup lang="ts">
 import type { Artwork } from "@prisma/client";
-import useAllArtworks from "~/composables/useAllArtworks";
 const route = useRoute();
-const allArtworks = await useAllArtworks();
+const artworks = ref<Artwork[]>([]);
 
-const artworks = ref(allArtworks.value);
+const currentPage = ref(1);
 
-const handleSearch = async () => {
-  console.log("watcher triggered");
+const fetchArtworks = async (page: number) => {
   const query = route.query.query as string;
   const tags = route.query.tags as string;
+  const { data, error } = await useFetch<Artwork[]>(`/api/search`, {
+    method: "GET",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    params: {
+      q: query || "",
+      tags: tags || "",
+      page,
+      limit: 25,
+    },
+  });
 
-  if (query || tags) {
-    console.log("query detected triggered getting filtered");
-    const { data, error } = await useFetch<Artwork[]>(
-      `/api/search?q=${encodeURIComponent(
-        query || ""
-      )}&tags=${encodeURIComponent(tags || "")}`,
-      {
-        method: "GET",
-        headers: {
-          "Content-Type": "application/json",
-        },
-      }
-    );
+  if (error.value) {
+    throw error.value;
+  }
 
-    if (error.value) {
-      throw error.value;
-    }
-    artworks.value = data.value;
-  } else {
-    console.log("query not triggered rendering all");
-    artworks.value = allArtworks.value;
+  if (data.value) {
+    artworks.value.push(...data.value);
+  }
+
+  currentPage.value += 1;
+  console.log(currentPage.value);
+  return data.value;
+};
+
+const handleSearch = async () => {
+  currentPage.value = 1;
+  try {
+    const data = await fetchArtworks(currentPage.value);
+    artworks.value = data;
+  } catch (error) {
+    console.error("Error fetching artworks:", error);
   }
 };
-watch(() => route.fullPath, handleSearch, { immediate: true });
+
+watch(() => route.fullPath, handleSearch);
+
+onMounted(() => {
+  currentPage.value = 1;
+  fetchArtworks(currentPage.value);
+});
 </script>
 <template>
   <div class="p-4 px-6 w-full">
-    <ArtworksGrid :artworks="artworks"></ArtworksGrid>
+    <ArtworksGrid
+      :artworks="artworks"
+      @intersected="fetchArtworks(currentPage)"
+    ></ArtworksGrid>
   </div>
 </template>

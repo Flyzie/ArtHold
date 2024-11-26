@@ -10,8 +10,8 @@ export default {
   ],
   theme: {
     colors: {
-      primary: "#150620",
-      secondary: "#48234d",
+      primary: "#0a030a",
+      secondary: "#230824",
       textPrimary: "#070809",
       textSecondary: "#edf487",
       errorRed: "#fc0352",
