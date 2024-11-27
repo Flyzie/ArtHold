@@ -4,41 +4,46 @@ const route = useRoute();
 const artworks = ref<Artwork[]>([]);
 
 const currentPage = ref(1);
+const maxPages = ref(2);
 
 const fetchArtworks = async (page: number) => {
   const query = route.query.query as string;
   const tags = route.query.tags as string;
-  const { data, error } = await useFetch<Artwork[]>(`/api/search`, {
-    method: "GET",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    params: {
-      q: query || "",
-      tags: tags || "",
-      page,
-      limit: 25,
-    },
-  });
+  if (currentPage.value <= maxPages.value) {
+    const data = await $fetch(`/api/search`, {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      params: {
+        q: query || "",
+        tags: tags || "",
+        page,
+        limit: 25,
+      },
+    });
 
-  if (error.value) {
-    throw error.value;
+    if (data) {
+      artworks.value.push(...data.artworks);
+    }
+
+    currentPage.value += 1;
+    maxPages.value = data.maxPages;
+    console.log(currentPage.value);
+    console.log(maxPages.value);
+    return data;
+  } else {
+    console.log("max pages reached: ", maxPages.value);
+    return;
   }
-
-  if (data.value) {
-    artworks.value.push(...data.value);
-  }
-
-  currentPage.value += 1;
-  console.log(currentPage.value);
-  return data.value;
 };
 
 const handleSearch = async () => {
   currentPage.value = 1;
+  artworks.value = [];
   try {
     const data = await fetchArtworks(currentPage.value);
-    artworks.value = data;
+    console.log("search triggered");
   } catch (error) {
     console.error("Error fetching artworks:", error);
   }
@@ -46,9 +51,9 @@ const handleSearch = async () => {
 
 watch(() => route.fullPath, handleSearch);
 
-onMounted(() => {
+onMounted(async () => {
   currentPage.value = 1;
-  fetchArtworks(currentPage.value);
+  await fetchArtworks(currentPage.value);
 });
 </script>
 <template>

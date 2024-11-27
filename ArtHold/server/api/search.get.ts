@@ -63,7 +63,11 @@ export default defineEventHandler(async (event) => {
       });
     }
 
-    return artworks;
+    return {
+      artworks,
+      artworksCount,
+      maxPages: Math.ceil(artworksCount / limitNum),
+    };
   } catch (error) {
     console.error("Error fetching artworks:", error);
     throw createError({
