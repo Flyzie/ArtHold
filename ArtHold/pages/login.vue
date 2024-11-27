@@ -5,12 +5,22 @@ const email = ref("");
 const password = ref("");
 
 async function handleSignIn() {
-  await signIn("github");
+  formSubmitted.value = true;
+  checkForErrors();
+  if (errorGate) {
+    await signIn("github");
+  } else {
+    return;
+  }
 }
 
 const errors = ref({
   emailError: false,
   passwordError: false,
+});
+
+const errorGate = computed(() => {
+  return Object.values(errors.value).every((error) => !error);
 });
 
 const formSubmitted = ref(false);

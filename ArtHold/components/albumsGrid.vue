@@ -80,7 +80,7 @@ const handleUpload = async (e: any) => {
         create new album
       </button>
       <form
-        @submit.preven="handleUpload"
+        @submit.prevent="handleUpload"
         v-if="isClicked"
         class="w-full flex flex-col items-center justify-center gap-2"
       >

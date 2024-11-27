@@ -73,7 +73,7 @@ onMounted(() => {
     <div
       v-if="artworks.length"
       ref="intersectionDiv"
-      class="bg-orange aspect-square overflow-hidden flex items-center justify-center rounded-md m-0 relative"
+      class="bg-orange invisible aspect-square overflow-hidden flex items-center justify-center rounded-md m-0 relative"
     >
       intersection observer
     </div>

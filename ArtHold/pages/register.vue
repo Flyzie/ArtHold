@@ -31,6 +31,10 @@ const errors = ref({
   matchPasswordError: false,
 });
 
+const errorGate = computed(() => {
+  return Object.values(errors.value).every((error) => !error);
+});
+
 const formSubmitted = ref(false);
 
 watch([email, password, confirmPassword, name], () => {
@@ -65,29 +69,33 @@ const checkForErrors = () => {
 const handleRegister = async () => {
   formSubmitted.value = true;
   checkForErrors();
-  const response = await fetch("/api/register", {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify({
-      name: name.value,
-      email: email.value,
-      password: password.value,
-      confirmPassword: confirmPassword.value,
-    }),
-  });
+  if (errorGate) {
+    const response = await fetch("/api/register", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        name: name.value,
+        email: email.value,
+        password: password.value,
+        confirmPassword: confirmPassword.value,
+      }),
+    });
 
-  if (!response.ok) {
-    const error = await response.json();
-    throw new Error(error.statusMessage);
+    if (!response.ok) {
+      const error = await response.json();
+      throw new Error(error.statusMessage);
+    }
+
+    const data = await response.json();
+    console.log("User created successfully:", data);
+
+    // Redirect to login page after successful registration
+    handleSignIn();
+  } else {
+    return;
   }
-
-  const data = await response.json();
-  console.log("User created successfully:", data);
-
-  // Redirect to login page after successful registration
-  handleSignIn();
 };
 
 definePageMeta({

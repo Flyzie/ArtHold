@@ -19,6 +19,10 @@ const errors = ref({
   imageError: false,
 });
 
+const errorGate = computed(() => {
+  return Object.values(errors.value).every((error) => !error);
+});
+
 const formSubmitted = ref(false);
 
 watch([name, description, image], () => {
@@ -53,32 +57,36 @@ const handleFileChange = (event: Event) => {
 const handleEdit = async (e: any) => {
   formSubmitted.value = true;
   checkForErrors();
-  const formData = new FormData(this);
-  formData.append("id", String(data.value?.user.id));
-  formData.append("name", name.value);
-  formData.append("description", description.value);
-  if (image.value) {
-    formData.append("image", image.value);
+  if (errorGate) {
+    const formData = new FormData(this);
+    formData.append("id", String(data.value?.user.id));
+    formData.append("name", name.value);
+    formData.append("description", description.value);
+    if (image.value) {
+      formData.append("image", image.value);
+    }
+
+    for (const [k, v] of formData.entries()) {
+      console.log(k, v);
+    }
+
+    const response = await fetch("/api/updateProfile", {
+      method: "PUT",
+      body: formData,
+    });
+
+    if (!response.ok) {
+      const error = await response.json();
+      throw new Error(error.statusMessage);
+    }
+
+    const useData = await response.json();
+    console.log("User updated succesfully:", useData);
+
+    router.push(`/${data.value?.user.id}`);
+  } else {
+    return;
   }
-
-  for (const [k, v] of formData.entries()) {
-    console.log(k, v);
-  }
-
-  const response = await fetch("/api/updateProfile", {
-    method: "PUT",
-    body: formData,
-  });
-
-  if (!response.ok) {
-    const error = await response.json();
-    throw new Error(error.statusMessage);
-  }
-
-  const useData = await response.json();
-  console.log("User updated succesfully:", useData);
-
-  router.push(`/${data.value?.user.id}`);
 };
 
 definePageMeta({

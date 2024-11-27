@@ -1,6 +1,7 @@
 // ArtHold/server/api/register.post.ts
 import { PrismaClient } from "@prisma/client";
 import formidable from "formidable";
+import { getServerSession } from "#auth";
 import fs from "fs";
 import path from "path";
 
@@ -13,6 +14,8 @@ if (!fs.existsSync(uploadDir)) {
 }
 
 export default defineEventHandler(async (event) => {
+  const session = await getServerSession(event);
+
   await protectRoute(event);
   const form = formidable({
     multiples: false,
@@ -34,7 +37,7 @@ export default defineEventHandler(async (event) => {
   const { userId, title, description, albumId, tags } = fields;
   const artworkImage = files.image ? files.image.newFilename : null;
 
-  const userID = Number(userId);
+  const userID = session?.user.id;
   const albumID = Number(albumId);
   const tagIDs = tags ? JSON.parse(tags) : [];
 
@@ -45,7 +48,7 @@ export default defineEventHandler(async (event) => {
     });
   }
 
-  if (!userId) {
+  if (!userID) {
     throw createError({
       statusCode: 400,
       statusMessage: "You have to be authorized",

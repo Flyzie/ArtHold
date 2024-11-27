@@ -9,7 +9,9 @@ const userData = await useUser(Number(route.params.userID));
 const userAlbums = await useUserAlbums(Number(route.params.userID));
 
 const profileImage = computed(() => {
-  return userData?.value?.image ? userData?.value?.image : "/logo.png";
+  return userData?.value?.image
+    ? userData?.value?.image
+    : "/placeholderProfile.jpg";
 });
 
 const hoveredImageId = ref(null);

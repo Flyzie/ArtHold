@@ -29,8 +29,8 @@ const fetchArtworks = async (page: number) => {
 
     currentPage.value += 1;
     maxPages.value = data.maxPages;
-    console.log(currentPage.value);
-    console.log(maxPages.value);
+    //console.log(currentPage.value);
+    //console.log(maxPages.value);
     return data;
   } else {
     console.log("max pages reached: ", maxPages.value);
@@ -42,7 +42,7 @@ const handleSearch = async () => {
   currentPage.value = 1;
   artworks.value = [];
   try {
-    const data = await fetchArtworks(currentPage.value);
+    await fetchArtworks(currentPage.value);
     console.log("search triggered");
   } catch (error) {
     console.error("Error fetching artworks:", error);

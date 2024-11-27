@@ -8,7 +8,7 @@ const userName = computed(() => userData.value?.name || "");
 const userImage = computed(() => userData.value?.image || "");
 
 const profileImage = computed(() => {
-  return userImage.value ? userImage.value : "/logo.png";
+  return userImage.value ? userImage.value : "/placeholderProfile.jpg";
 });
 
 const toggleDropdown = () => {

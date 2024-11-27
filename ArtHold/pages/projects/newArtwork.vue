@@ -4,12 +4,12 @@ import { ref, computed } from "vue";
 const { data } = useAuth();
 const router = useRouter();
 const tags = await useTags();
+const albums = await useUserAlbums(Number(data.value?.user.id));
 
 const artworkTitle = ref("");
 const artworkDescription = ref("");
 const image = ref<File | null>(null);
 const imageUrl = ref<string | null>(null);
-const albums = await useUserAlbums(Number(data.value?.user.id));
 const selectedAlbum = ref<number | null>(null);
 const selectedTags = ref<{ id: number; name: string }[]>([]);
 
@@ -17,11 +17,16 @@ const errors = ref({
   titleError: false,
   descriptionError: false,
   imageError: false,
+  albumError: false,
+});
+
+const errorGate = computed(() => {
+  return Object.values(errors.value).every((error) => !error);
 });
 
 const formSubmitted = ref(false);
 
-watch([artworkTitle, artworkDescription, image], () => {
+watch([artworkTitle, artworkDescription, image, selectedAlbum], () => {
   if (formSubmitted.value) {
     checkForErrors();
   }
@@ -31,6 +36,7 @@ const checkForErrors = () => {
   errors.value.titleError = false;
   errors.value.descriptionError = false;
   errors.value.imageError = false;
+  errors.value.albumError = false;
 
   if (artworkTitle.value === "") {
     errors.value.titleError = true;
@@ -40,6 +46,9 @@ const checkForErrors = () => {
   }
   if (artworkDescription.value === "") {
     errors.value.descriptionError = true;
+  }
+  if (selectedAlbum.value === null) {
+    errors.value.albumError = true;
   }
 };
 
@@ -62,40 +71,44 @@ const handleFileChange = (event: Event) => {
 const handleUpload = async (e: any) => {
   formSubmitted.value = true;
   checkForErrors();
-  const formData = new FormData();
-  formData.append("userId", String(data.value?.user.id));
-  formData.append("title", artworkTitle.value);
-  formData.append("description", artworkDescription.value);
-  if (image.value) {
-    formData.append("image", image.value);
-  }
-  if (selectedAlbum.value) {
-    formData.append("albumId", String(selectedAlbum.value));
-  }
-  if (selectedTags.value.length) {
-    formData.append(
-      "tags",
-      JSON.stringify(selectedTags.value.map((tag) => tag.id))
-    );
-  }
+  if (errorGate) {
+    const formData = new FormData();
+    formData.append("userId", String(data.value?.user.id));
+    formData.append("title", artworkTitle.value);
+    formData.append("description", artworkDescription.value);
+    if (image.value) {
+      formData.append("image", image.value);
+    }
+    if (selectedAlbum.value) {
+      formData.append("albumId", String(selectedAlbum.value));
+    }
+    if (selectedTags.value.length) {
+      formData.append(
+        "tags",
+        JSON.stringify(selectedTags.value.map((tag) => tag.id))
+      );
+    }
 
-  for (const [k, v] of formData.entries()) {
-    console.log(k, v);
+    for (const [k, v] of formData.entries()) {
+      console.log(k, v);
+    }
+
+    const response = await fetch("/api/artwork", {
+      method: "POST",
+      body: formData,
+    });
+
+    if (!response.ok) {
+      const error = await response.json();
+      throw new Error(error.statusMessage);
+    }
+
+    const useData = await response.json();
+    console.log("Artwork Created succesfully:", useData);
+    router.push(`/${data.value?.user.id}`);
+  } else {
+    return;
   }
-
-  const response = await fetch("/api/artwork", {
-    method: "POST",
-    body: formData,
-  });
-
-  if (!response.ok) {
-    const error = await response.json();
-    throw new Error(error.statusMessage);
-  }
-
-  const useData = await response.json();
-  console.log("Artwork Created succesfully:", useData);
-  router.push(`/${data.value?.user.id}`);
 };
 
 const addTag = (tag: { id: number; name: string }) => {
@@ -171,6 +184,7 @@ definePageMeta({
           id="album"
           name="album"
           class="p-5 w-full rounded-sm mb-3"
+          :class="{ errorState: errors.albumError }"
         >
           <option
             v-for="album in albums"

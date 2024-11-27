@@ -3,7 +3,7 @@ import useUser from "~/composables/useUser";
 import useArtwork from "~/composables/useArtwork";
 const route = useRoute();
 
-const { status, data } = useAuth();
+const { data } = useAuth();
 
 const artwork = await useArtwork(Number(route.params.artworkID));
 const userData = await useUser(Number(artwork.value?.userID));
@@ -15,6 +15,14 @@ const isUser = computed(() => {
     return false;
   }
 });
+
+const likeArtwork = async () => {
+  const { data, error } = await useFetch(`/api/artwork/like`, {
+    params: {
+      artworkID: artwork.value?.id,
+    },
+  });
+};
 </script>
 
 <template>
@@ -37,15 +45,17 @@ const isUser = computed(() => {
           class="rounded-full aspect-square mb-6 border-solid border-8 border-textSecondary"
         ></NuxtImg>
         <div>
-          <h1 class="text-4xl bg-textPrimary text-textSecondary p-1 mb-3">
+          <h1 class="text-3xl bg-textPrimary text-textSecondary p-1">
             {{ userData?.name }}
           </h1>
-          <p class="text-3xl text-white">{{ userData?.description }}</p>
-          <p class="text-xl text-white">Likes: {{ userData?.likedArtworks }}</p>
+          <p class="text-2xl text-white p-1">{{ userData?.description }}</p>
+          <p class="text-xl text-white p-1">
+            Likes: {{ userData?.likedArtworks }}
+          </p>
         </div>
       </div>
       <div class="flex flex-wrap items-center gap-3">
-        <h1 class="text-4xl bg-textPrimary text-textSecondary p-1 text-wrap">
+        <h1 class="text-8xl bg-textPrimary text-textSecondary p-1 text-wrap">
           {{ artwork?.title }}
         </h1>
         <NuxtLink
@@ -55,8 +65,14 @@ const isUser = computed(() => {
         >
       </div>
       <div>
-        <p class="text-3xl text-white">{{ artwork?.description }}</p>
-        <p class="text-xl text-white">Likes: {{ artwork?.likes }}</p>
+        <p class="text-3xl text-white px-1">{{ artwork?.description }}</p>
+        <p class="text-xl text-white px-1">Likes: {{ artwork?.likes }}</p>
+        <button
+          @click="likeArtwork"
+          class="w-full p-1 bg-textSecondary text-textPrimary rounded-lg hover:bg-textPrimary hover:text-textSecondary"
+        >
+          Like
+        </button>
         <p class="text-gray mt-10">Posted:</p>
       </div>
     </div>
