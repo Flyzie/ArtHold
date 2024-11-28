@@ -15,14 +15,6 @@ const isUser = computed(() => {
     return false;
   }
 });
-
-const likeArtwork = async () => {
-  const { data, error } = await useFetch(`/api/artwork/like`, {
-    params: {
-      artworkID: artwork.value?.id,
-    },
-  });
-};
 </script>
 
 <template>
@@ -67,12 +59,7 @@ const likeArtwork = async () => {
       <div>
         <p class="text-3xl text-white px-1">{{ artwork?.description }}</p>
         <p class="text-xl text-white px-1">Likes: {{ artwork?.likes }}</p>
-        <button
-          @click="likeArtwork"
-          class="w-full p-1 bg-textSecondary text-textPrimary rounded-lg hover:bg-textPrimary hover:text-textSecondary"
-        >
-          Like
-        </button>
+        <LikeButton class="w-full" :artworkID="artwork?.id"></LikeButton>
         <p class="text-gray mt-10">Posted:</p>
       </div>
     </div>
