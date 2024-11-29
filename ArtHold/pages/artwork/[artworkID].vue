@@ -3,10 +3,11 @@ import useUser from "~/composables/useUser";
 import useArtwork from "~/composables/useArtwork";
 const route = useRoute();
 
-const { data } = useAuth();
+const { data, status } = useAuth();
 
 const artwork = await useArtwork(Number(route.params.artworkID));
 const userData = await useUser(Number(artwork.value?.userID));
+const loggedIn = computed(() => status.value === "authenticated");
 
 const isUser = computed(() => {
   if (data.value?.user.id === Number(artwork.value?.userID)) {
@@ -56,10 +57,17 @@ const isUser = computed(() => {
           >Edit Artwork</NuxtLink
         >
       </div>
-      <div>
+      <div class="w-full">
         <p class="text-3xl text-white px-1">{{ artwork?.description }}</p>
-        <p class="text-xl text-white px-1">Likes: {{ artwork?.likes }}</p>
-        <LikeButton class="w-full" :artworkID="artwork?.id"></LikeButton>
+        <p v-if="!loggedIn" class="text-xl text-white px-1">
+          Likes: {{ artwork?.likes }}
+        </p>
+        <LikeButton
+          v-if="loggedIn"
+          class="w-full"
+          :artworkID="artwork?.id"
+          :likes="artwork?.likes"
+        ></LikeButton>
         <p class="text-gray mt-10">Posted:</p>
       </div>
     </div>

@@ -91,7 +91,6 @@ const handleRegister = async () => {
     const data = await response.json();
     console.log("User created successfully:", data);
 
-    // Redirect to login page after successful registration
     handleSignIn();
   } else {
     return;

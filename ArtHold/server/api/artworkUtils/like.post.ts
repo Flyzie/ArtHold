@@ -16,58 +16,47 @@ export default defineEventHandler(async (event) => {
     });
   }
 
-  const existingUser = await prisma.user.findUnique({
-    where: { id: userID },
+  if (!userID) {
+    throw createError({
+      statusCode: 400,
+      statusMessage: "User ID is required",
+    });
+  }
+
+  let likedAlbum = await prisma.album.findFirst({
+    where: {
+      userID: userID,
+      name: "Liked Artworks",
+    },
+    include: {
+      assignedArtworks: true,
+    },
   });
 
-  try {
-    if (!userID) {
-      throw createError({
-        statusCode: 400,
-        statusMessage: "User ID is required",
-      });
-    }
-
-    let likedAlbum = await prisma.album.findFirst({
-      where: {
-        userID: userID,
+  if (!likedAlbum) {
+    likedAlbum = await prisma.album.create({
+      data: {
         name: "Liked Artworks",
+        userID: userID,
       },
       include: {
         assignedArtworks: true,
       },
     });
+  }
 
-    if (!likedAlbum) {
-      likedAlbum = await prisma.album.create({
-        data: {
-          name: "Liked Artworks",
-          userID: userID,
-        },
-        include: {
-          assignedArtworks: true,
-        },
-      });
-    }
+  const isAlreadyLiked = likedAlbum.assignedArtworks.some(
+    (artwork) => artwork.id === Number(artworkID)
+  );
 
-    const isAlreadyLiked = likedAlbum.assignedArtworks.some(
-      (artwork) => artwork.id === Number(artworkID)
-    );
-
-    if (isAlreadyLiked) {
-      throw createError({
-        statusCode: 404,
-        statusMessage: "You already liked",
-      });
-    }
-
+  if (isAlreadyLiked) {
     await prisma.album.update({
       where: {
         id: likedAlbum.id,
       },
       data: {
         assignedArtworks: {
-          connect: { id: Number(artworkID) },
+          disconnect: { id: Number(artworkID) },
         },
       },
     });
@@ -78,14 +67,14 @@ export default defineEventHandler(async (event) => {
       },
       data: {
         likes: {
-          increment: 1,
+          decrement: 1,
         },
       },
     });
 
     if (!artwork) {
       throw createError({
-        statusCode: 404,
+        statusCode: 400,
         statusMessage: "Artwork not found",
       });
     }
@@ -93,12 +82,50 @@ export default defineEventHandler(async (event) => {
     return {
       statusCode: 200,
       body: {
-        message: "Artwork liked",
+        message: "Artwork unliked",
+        artwork: artwork,
+      },
+    };
+  }
+
+  await prisma.album.update({
+    where: {
+      id: likedAlbum.id,
+    },
+    data: {
+      assignedArtworks: {
+        connect: { id: Number(artworkID) },
+      },
+    },
+  });
+
+  const artwork = await prisma.artwork.update({
+    where: {
+      id: Number(artworkID),
+    },
+    data: {
+      likes: {
+        increment: 1,
+      },
+    },
+  });
+
+  if (!artwork) {
+    throw createError({
+      statusCode: 400,
+      statusMessage: "Artwork not found",
+    });
+  }
+  try {
+    return {
+      statusCode: 200,
+      body: {
+        message: "Artwork like status changed",
         artwork: artwork,
       },
     };
   } catch (error) {
-    console.error("Error liking artwork:", error);
+    console.error("Error liking/unliking artwork:", error);
     throw createError({
       statusCode: 500,
       statusMessage: "Internal server error, cannot like",
