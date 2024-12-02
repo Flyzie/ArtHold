@@ -3,6 +3,7 @@ import { getServerSession } from "#auth";
 const prisma = new PrismaClient();
 
 export default defineEventHandler(async (event) => {
+  await protectRoute(event);
   const session = await getServerSession(event);
   const query = getQuery(event);
   const { artworkID } = query;

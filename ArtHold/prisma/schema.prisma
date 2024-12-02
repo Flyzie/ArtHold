@@ -20,19 +20,21 @@ model User {
     updatedAt     DateTime? @updatedAt
     albums        Album[]
     Artwork       Artwork[]
+    Comments      Comment[]
 }
 
 model Artwork {
-    id           Int    @id @default(autoincrement())
-    artworkImage String
-    title        String
-    description  String
-    likes        Int    @default(0)
-    albumID      Int?
-    album        Album? @relation(fields: [albumID], references: [id])
-    userID       Int
-    user         User   @relation(fields: [userID], references: [id])
-    assignedTags Tag[]  @relation("ArtworkTags")
+    id               Int       @id @default(autoincrement())
+    artworkImage     String
+    title            String
+    description      String
+    likes            Int       @default(0)
+    albumID          Int?
+    album            Album?    @relation(fields: [albumID], references: [id])
+    userID           Int
+    user             User      @relation(fields: [userID], references: [id])
+    assignedTags     Tag[]     @relation("ArtworkTags")
+    assignedComments Comment[]
 }
 
 model Album {
@@ -47,4 +49,16 @@ model Tag {
     id       Int       @id @default(autoincrement())
     name     String    @unique
     artworks Artwork[] @relation("ArtworkTags")
+}
+
+model Comment {
+    id        Int       @id @default(autoincrement())
+    contents  String
+    Artwork   Artwork?  @relation(fields: [artworkId], references: [id])
+    artworkId Int?
+    User      User?     @relation(fields: [userId], references: [id])
+    userId    Int?
+    parentId  Int?      @unique
+    parent    Comment?  @relation("CommentReplies", fields: [parentId], references: [id])
+    replies   Comment[] @relation("CommentReplies")
 }

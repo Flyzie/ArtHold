@@ -19,8 +19,8 @@ const isUser = computed(() => {
 </script>
 
 <template>
-  <div class="grid grid-cols-3 grid-rows-1 w-full p-5 h-full gap-4">
-    <div class="col-span-2 h-full bg-textPrimary rounded-md p-5">
+  <div class="grid grid-cols-3 auto-rows-auto w-full p-5 gap-4">
+    <div class="col-span-2 bg-textPrimary rounded-md">
       <NuxtImg
         :src="artwork?.artworkImage"
         class="w-full object-contain rounded-md h-full"
@@ -48,7 +48,9 @@ const isUser = computed(() => {
         </div>
       </div>
       <div class="flex flex-wrap items-center gap-3">
-        <h1 class="text-8xl bg-textPrimary text-textSecondary p-1 text-wrap">
+        <h1
+          class="md:text-8xl text-5xl bg-textPrimary text-textSecondary p-1 text-wrap"
+        >
           {{ artwork?.title }}
         </h1>
         <NuxtLink
@@ -64,12 +66,12 @@ const isUser = computed(() => {
         </p>
         <LikeButton
           v-if="loggedIn"
-          class="w-full"
           :artworkID="artwork?.id"
           :likes="artwork?.likes"
         ></LikeButton>
         <p class="text-gray mt-10">Posted:</p>
       </div>
+      <CommentDisplay></CommentDisplay>
     </div>
   </div>
 </template>
