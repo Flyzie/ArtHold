@@ -26,17 +26,14 @@ export default defineEventHandler(async (event) => {
     });
   }
 
-  const user = await prisma.user.findUnique({
-    where: {
-      id: userID,
-    },
-  });
-
   const newComment = await prisma.comment.create({
     data: {
       contents: comment,
       artworkId,
       userId: userID,
+    },
+    include: {
+      user: true,
     },
   });
 
@@ -52,7 +49,7 @@ export default defineEventHandler(async (event) => {
     console.error("Error posting a comment:", error);
     throw createError({
       statusCode: 500,
-      statusMessage: "Internal server error, cannot like",
+      statusMessage: "Internal server error, cannot comment",
     });
   }
 });

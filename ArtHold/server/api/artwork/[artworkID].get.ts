@@ -17,6 +17,7 @@ export default defineEventHandler(async (event) => {
       where: {
         id: artworkIdInt,
       },
+      include: { assignedComments: true, assignedTags: true },
     });
 
     if (!artwork) {

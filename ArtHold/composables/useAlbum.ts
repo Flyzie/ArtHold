@@ -1,4 +1,4 @@
-import type { Album, Artwork } from "@prisma/client";
+import type { Album, Artwork, User } from "@prisma/client";
 
 interface ArtworkWithUser extends Artwork {
   user: User;

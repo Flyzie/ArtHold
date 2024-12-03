@@ -47,7 +47,7 @@ onMounted(() => {
     class="w-full h-full text-textPrimary grid grid-flow-row grid-cols-[repeat(auto-fit,minmax(250px,1fr))] gap-1"
   >
     <div
-      v-for="artwork in artworks"
+      v-for="artwork in props.artworks"
       @mouseenter="toggleHovered(artwork?.id)"
       @mouseleave="clearHovered"
       :key="artwork?.id"

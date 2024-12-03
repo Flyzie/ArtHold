@@ -8,6 +8,7 @@ const { data, status } = useAuth();
 const artwork = await useArtwork(Number(route.params.artworkID));
 const userData = await useUser(Number(artwork.value?.userID));
 const loggedIn = computed(() => status.value === "authenticated");
+const comments = artwork.value?.assignedComments ?? [];
 
 const isUser = computed(() => {
   if (data.value?.user.id === Number(artwork.value?.userID)) {
@@ -20,10 +21,10 @@ const isUser = computed(() => {
 
 <template>
   <div class="grid grid-cols-3 auto-rows-auto w-full p-5 gap-4">
-    <div class="col-span-2 bg-textPrimary rounded-md">
+    <div class="col-span-2 rounded-md">
       <NuxtImg
         :src="artwork?.artworkImage"
-        class="w-full object-contain rounded-md h-full"
+        class="w-full object-contain rounded-md"
       ></NuxtImg>
     </div>
     <div
@@ -71,7 +72,7 @@ const isUser = computed(() => {
         ></LikeButton>
         <p class="text-gray mt-10">Posted:</p>
       </div>
-      <CommentDisplay></CommentDisplay>
+      <CommentDisplay :comments="comments"></CommentDisplay>
     </div>
   </div>
 </template>
