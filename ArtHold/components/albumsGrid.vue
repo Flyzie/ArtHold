@@ -49,7 +49,7 @@ const handleUpload = async (e: any) => {
     class="grid grid-flow-row grid-cols-[repeat(auto-fit,minmax(150px,0.2fr))] gap-1"
   >
     <div
-      v-for="album in albums"
+      v-for="album in props.albums"
       :key="album.id"
       @mouseenter="toggleHovered(album?.id)"
       @mouseleave="clearHovered"

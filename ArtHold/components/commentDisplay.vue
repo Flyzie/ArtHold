@@ -4,13 +4,13 @@ import type { Comment, User } from "@prisma/client";
 const { status } = useAuth();
 const route = useRoute();
 
-const loggedIn = computed(() => status.value === "authenticated");
-const comment = ref("");
-const artworkID = Number(route.params.artworkID);
-
 const props = defineProps<{
   comments: Comment[];
 }>();
+
+const loggedIn = computed(() => status.value === "authenticated");
+const comment = ref("");
+const artworkID = Number(route.params.artworkID);
 
 const handlePostComment = async () => {
   const { error } = await useFetch("/api/artworkUtils/comment", {

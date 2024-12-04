@@ -42,7 +42,7 @@ export default defineEventHandler(async (event) => {
       statusCode: 200,
       body: {
         message: "Comment posted",
-        artwork: newComment,
+        comment: newComment,
       },
     };
   } catch (error) {
