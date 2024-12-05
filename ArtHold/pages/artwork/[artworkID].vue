@@ -5,10 +5,11 @@ const route = useRoute();
 
 const { data, status } = useAuth();
 
-const artwork = await useArtwork(Number(route.params.artworkID));
+let artwork = await useArtwork(Number(route.params.artworkID));
 const userData = await useUser(Number(artwork.value?.userID));
 const loggedIn = computed(() => status.value === "authenticated");
-const comments = artwork.value?.assignedComments ?? [];
+const comments = computed(() => artwork.value?.assignedComments ?? []);
+const compKey = ref(0);
 
 const isUser = computed(() => {
   if (data.value?.user.id === Number(artwork.value?.userID)) {
@@ -17,18 +18,34 @@ const isUser = computed(() => {
     return false;
   }
 });
+
+const refreshing = ref(false);
+const refreshAll = async () => {
+  refreshing.value = true;
+  try {
+    await refreshNuxtData();
+  } finally {
+    refreshing.value = false;
+  }
+};
+
+const reloadPage = async () => {
+  //window.location.reload();
+  artwork = await useArtwork(Number(route.params.artworkID));
+  compKey.value += 1;
+};
 </script>
 
 <template>
   <div class="grid grid-cols-3 auto-rows-auto w-full p-5 gap-4">
-    <div class="col-span-2 rounded-md">
+    <div class="md:col-span-2 col-span-3 rounded-md">
       <NuxtImg
         :src="artwork?.artworkImage"
         class="w-full object-contain rounded-md"
       ></NuxtImg>
     </div>
     <div
-      class="col-span-1 min-w-40 flex flex-col justify-start items-start p-5 gap-5 bg-secondary rounded-md"
+      class="md:col-span-1 col-span-3 flex flex-col justify-start items-start p-5 gap-5 bg-secondary rounded-md"
     >
       <div class="flex flex-wrap gap-6">
         <NuxtImg
@@ -49,9 +66,7 @@ const isUser = computed(() => {
         </div>
       </div>
       <div class="flex flex-wrap items-center gap-3">
-        <h1
-          class="md:text-8xl text-5xl bg-textPrimary text-textSecondary p-1 text-wrap"
-        >
+        <h1 class="text-8xl bg-textPrimary text-textSecondary p-1 text-wrap">
           {{ artwork?.title }}
         </h1>
         <NuxtLink
@@ -72,7 +87,11 @@ const isUser = computed(() => {
         ></LikeButton>
         <p class="text-gray mt-10">Posted:</p>
       </div>
-      <CommentDisplay :comments="comments"></CommentDisplay>
+      <CommentDisplay
+        @refreshComponent="reloadPage"
+        :key="compKey"
+        :comments="comments"
+      ></CommentDisplay>
     </div>
   </div>
 </template>

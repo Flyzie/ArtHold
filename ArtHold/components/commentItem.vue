@@ -8,6 +8,10 @@ const props = defineProps<{
 const userId = data.value?.user.id;
 const commentID = props.comment.id;
 const isModalOpen = ref(false);
+const editMode = ref(false);
+const commentContent = ref(props.comment.contents);
+
+const emit = defineEmits(["refreshComments"]);
 
 const isOp = computed(() => {
   if (userId === props.comment.userId) {
@@ -42,8 +46,28 @@ const handleDelete = async () => {
     });
   }
   isModalOpen.value = false;
+  emit("refreshComments");
 };
-const handleEdit = async () => {};
+const handleEdit = async () => {
+  const { error } = await useFetch("/api/artworkUtils/editComment", {
+    method: "PUT",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+      commentID: commentID,
+      editedComment: commentContent.value,
+    }),
+  });
+  if (error.value) {
+    throw createError({
+      statusCode: 400,
+      statusMessage: `${error.value.data.message}`,
+    });
+  }
+  editMode.value = false;
+  emit("refreshComments");
+};
 </script>
 <template>
   <div class="mb-4 bg-textPrimary rounded-sm">
@@ -71,6 +95,7 @@ const handleEdit = async () => {};
           Delete
         </button>
         <button
+          @click="editMode = true"
           class="text-textPrimary bg-textSecondary px-0.5 rounded-sm hover:bg-white"
         >
           Edit
@@ -78,7 +103,31 @@ const handleEdit = async () => {};
       </div>
     </div>
     <div class="px-2 py-1">
-      <h1 class="text-white text-2xl text-balance">{{ comment.contents }}</h1>
+      <h1 v-if="!editMode" class="text-white text-2xl text-balance">
+        {{ comment.contents }}
+      </h1>
+      <div v-if="editMode">
+        <textarea
+          class="bg-textSecondary no-scrollbar resize-none text-black rounded-sm px-4 py-2 w-full h-max placeholder-gray-dark focus:outline-none text-primary focus:text-primary"
+          v-model="commentContent"
+          type="text"
+          maxlength="200"
+        ></textarea>
+        <div class="flex gap-2">
+          <button
+            @click="handleEdit"
+            class="text-textPrimary bg-textSecondary px-0.5 rounded-sm hover:bg-white"
+          >
+            Confirm
+          </button>
+          <button
+            @click="editMode = false"
+            class="text-textPrimary bg-textSecondary px-0.5 rounded-sm hover:bg-white"
+          >
+            Cancel
+          </button>
+        </div>
+      </div>
       <button class="text-gray-light rounded-sm">Reply</button>
     </div>
   </div>

@@ -12,6 +12,8 @@ const loggedIn = computed(() => status.value === "authenticated");
 const comment = ref("");
 const artworkID = Number(route.params.artworkID);
 
+const emit = defineEmits(["refreshComponent"]);
+
 const handlePostComment = async () => {
   const { error } = await useFetch("/api/artworkUtils/comment", {
     method: "POST",
@@ -30,6 +32,11 @@ const handlePostComment = async () => {
       statusMessage: `${error.value.data.message}`,
     });
   }
+  emit("refreshComponent");
+};
+
+const emitRefreshComponent = () => {
+  emit("refreshComponent");
 };
 </script>
 <template>
@@ -38,6 +45,8 @@ const handlePostComment = async () => {
     <div class="w-full rounded-md">
       <CommentItem
         :comment="comment"
+        :key="comment.id"
+        @refreshComments="emitRefreshComponent"
         v-for="comment in props.comments"
       ></CommentItem>
     </div>

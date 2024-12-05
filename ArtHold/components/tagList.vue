@@ -68,4 +68,14 @@ onBeforeUnmount(() => {
   </div>
 </template>
 
-<style scoped></style>
+<style scoped>
+@media (max-width: 640px) {
+  .dropdown-menu {
+    position: fixed;
+    top: 5rem;
+    left: 0;
+
+    z-index: 1000; /* Ensure it stays on top */
+  }
+}
+</style>
