@@ -1,20 +1,29 @@
 <script setup lang="ts">
 import { useRoute } from "vue-router";
 import type { Comment, User } from "@prisma/client";
+import type { CommentWithReplies } from "~/composables/useArtwork";
+
 const { status } = useAuth();
 const route = useRoute();
 
 const props = defineProps<{
-  comments: Comment[];
+  comments: CommentWithReplies[];
 }>();
 
+const originalComments = computed(() => {
+  return props.comments.filter((comment) => comment.parentId === null);
+});
+
+const replies = computed(() => {
+  return props.comments.filter((comment) => comment.parentId !== null);
+});
+
 const loggedIn = computed(() => status.value === "authenticated");
-const comment = ref("");
 const artworkID = Number(route.params.artworkID);
 
 const emit = defineEmits(["refreshComponent"]);
 
-const handlePostComment = async () => {
+const handlePostComment = async (newComment: string) => {
   const { error } = await useFetch("/api/artworkUtils/comment", {
     method: "POST",
     headers: {
@@ -22,7 +31,7 @@ const handlePostComment = async () => {
     },
     body: JSON.stringify({
       artworkID: artworkID,
-      comment: comment.value,
+      comment: newComment,
     }),
   });
 
@@ -44,29 +53,15 @@ const emitRefreshComponent = () => {
     <h1 class="text-white">Comments:</h1>
     <div class="w-full rounded-md">
       <CommentItem
+        v-for="comment in originalComments"
         :comment="comment"
+        :replies="replies"
         :key="comment.id"
         @refreshComments="emitRefreshComponent"
-        v-for="comment in props.comments"
       ></CommentItem>
     </div>
-    <div v-if="loggedIn" class="w-full flex justify-start items-start gap-1">
-      <textarea
-        class="bg-textSecondary no-scrollbar resize-none text-black rounded-sm px-4 py-2 w-full h-max placeholder-gray-dark focus:outline-none text-primary focus:text-primary"
-        v-model="comment"
-        type="text"
-        placeholder="Comment..."
-        maxlength="200"
-      ></textarea>
-      <button
-        @click="handlePostComment"
-        class="w-12 rounded-sm h-full bg-textSecondary flex items-center justify-center"
-      >
-        <NuxtImg
-          class="w-full h-full"
-          src="/angle-up-svgrepo-com.svg"
-        ></NuxtImg>
-      </button>
+    <div v-if="loggedIn">
+      <CommentInput :onSubmit="handlePostComment" />
     </div>
   </div>
 </template>

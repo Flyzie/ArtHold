@@ -1,4 +1,4 @@
-import { PrismaClient } from "@prisma/client";
+import { PrismaClient, Comment } from "@prisma/client";
 import { getServerSession } from "#auth";
 const prisma = new PrismaClient();
 
@@ -7,10 +7,11 @@ export default defineEventHandler(async (event) => {
   const body = await readBody(event);
   const session = await getServerSession(event);
 
-  const { artworkID, comment } = body;
+  const { artworkID, comment, parentID } = body;
 
-  const userID = session?.user.id;
+  const userID = Number(session?.user.id);
   const artworkId = Number(artworkID);
+  const parentId = Number(parentID);
 
   if (!comment) {
     throw createError({
@@ -19,7 +20,32 @@ export default defineEventHandler(async (event) => {
     });
   }
 
-  if (!artworkID) {
+  const commentData: any = {
+    contents: comment,
+    userId: userID,
+  };
+
+  if (parentId) {
+    const parentComment = await prisma.comment.findUnique({
+      where: {
+        id: parentId,
+      },
+    });
+
+    if (parentComment?.parentId) {
+      throw createError({
+        statusCode: 400,
+        statusMessage: "Cannot reply to a reply",
+      });
+    }
+
+    commentData.parentId = parentId;
+    commentData.artworkId = parentComment?.artworkId;
+  } else {
+    commentData.artworkId = artworkId;
+  }
+
+  if (!commentData.artworkId) {
     throw createError({
       statusCode: 400,
       statusMessage: "Cannot post a comment into the void",
@@ -28,12 +54,11 @@ export default defineEventHandler(async (event) => {
 
   const newComment = await prisma.comment.create({
     data: {
-      contents: comment,
-      artworkId,
-      userId: userID,
+      ...commentData,
     },
     include: {
       user: true,
+      replies: true,
     },
   });
 

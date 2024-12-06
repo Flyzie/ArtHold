@@ -1,15 +1,25 @@
 <script setup lang="ts">
 import type { Comment, User } from "@prisma/client";
+import type { CommentWithReplies } from "~/composables/useArtwork";
 const { data } = useAuth();
 const props = defineProps<{
-  comment: Comment;
+  comment: CommentWithReplies;
+  replies?: Comment[];
 }>();
 
 const userId = data.value?.user.id;
 const commentID = props.comment.id;
 const isModalOpen = ref(false);
 const editMode = ref(false);
+const replyMode = ref(false);
 const commentContent = ref(props.comment.contents);
+
+console.log(props.comment.replies);
+
+const assignedReplies = computed(() => {
+  if (props.replies)
+    return props.replies.filter((reply) => reply.parentId === commentID);
+});
 
 const emit = defineEmits(["refreshComments"]);
 
@@ -48,6 +58,7 @@ const handleDelete = async () => {
   isModalOpen.value = false;
   emit("refreshComments");
 };
+
 const handleEdit = async () => {
   const { error } = await useFetch("/api/artworkUtils/editComment", {
     method: "PUT",
@@ -66,6 +77,28 @@ const handleEdit = async () => {
     });
   }
   editMode.value = false;
+  emit("refreshComments");
+};
+
+const handlePostReply = async (newComment: string) => {
+  const { error } = await useFetch("/api/artworkUtils/comment", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+      parentID: commentID,
+      comment: newComment,
+    }),
+  });
+
+  if (error.value) {
+    throw createError({
+      statusCode: 400,
+      statusMessage: `${error.value.data.message}`,
+    });
+  }
+  replyMode.value = false;
   emit("refreshComments");
 };
 </script>
@@ -128,7 +161,33 @@ const handleEdit = async () => {
           </button>
         </div>
       </div>
-      <button class="text-gray-light rounded-sm">Reply</button>
+      <button
+        v-if="!replyMode && !comment.parentId"
+        @click="replyMode = true"
+        class="text-gray-light rounded-sm"
+      >
+        Reply
+      </button>
+      <div
+        v-if="replyMode"
+        class="flex gap-1 items-start justify-start flex-wrap"
+      >
+        <CommentInput :onSubmit="handlePostReply"></CommentInput>
+        <button
+          @click="replyMode = false"
+          class="text-textPrimary bg-textSecondary px-0.5 rounded-sm hover:bg-white"
+        >
+          Cancel
+        </button>
+      </div>
+    </div>
+    <div class="pl-8 bg-textSecondary">
+      <CommentItem
+        v-for="reply in assignedReplies"
+        :key="reply.id"
+        :comment="reply"
+        @refreshComments="emit('refreshComments')"
+      />
     </div>
   </div>
   <ActionModal

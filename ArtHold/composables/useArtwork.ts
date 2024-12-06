@@ -1,10 +1,14 @@
 import type { Artwork, Comment, User } from "@prisma/client";
 
-interface ArtworkWithComments extends Artwork {
-  assignedComments: Comment[];
+export interface CommentWithReplies extends Comment {
+  replies: Comment[];
 }
 
-export default async (artworkID: Number) => {
+interface ArtworkWithComments extends Artwork {
+  assignedComments: CommentWithReplies[];
+}
+
+export async function useArtwork(artworkID: Number) {
   const { data, error } = await useFetch<ArtworkWithComments>(
     `/api/artwork/${artworkID}`,
     {
@@ -17,4 +21,4 @@ export default async (artworkID: Number) => {
   }
 
   return data;
-};
+}

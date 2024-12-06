@@ -1,15 +1,14 @@
 <script setup lang="ts">
 import useUser from "~/composables/useUser";
-import useArtwork from "~/composables/useArtwork";
+import { useArtwork } from "~/composables/useArtwork";
 const route = useRoute();
 
 const { data, status } = useAuth();
 
-let artwork = await useArtwork(Number(route.params.artworkID));
+const artwork = await useArtwork(Number(route.params.artworkID));
 const userData = await useUser(Number(artwork.value?.userID));
 const loggedIn = computed(() => status.value === "authenticated");
 const comments = computed(() => artwork.value?.assignedComments ?? []);
-const compKey = ref(0);
 
 const isUser = computed(() => {
   if (data.value?.user.id === Number(artwork.value?.userID)) {
@@ -19,20 +18,9 @@ const isUser = computed(() => {
   }
 });
 
-const refreshing = ref(false);
-const refreshAll = async () => {
-  refreshing.value = true;
-  try {
-    await refreshNuxtData();
-  } finally {
-    refreshing.value = false;
-  }
-};
-
-const reloadPage = async () => {
-  //window.location.reload();
-  artwork = await useArtwork(Number(route.params.artworkID));
-  compKey.value += 1;
+const reloadComments = async () => {
+  const freshArtworkRef = await useArtwork(Number(route.params.artworkID));
+  artwork.value = freshArtworkRef.value;
 };
 </script>
 
@@ -88,8 +76,7 @@ const reloadPage = async () => {
         <p class="text-gray mt-10">Posted:</p>
       </div>
       <CommentDisplay
-        @refreshComponent="reloadPage"
-        :key="compKey"
+        @refreshComponent="reloadComments"
         :comments="comments"
       ></CommentDisplay>
     </div>

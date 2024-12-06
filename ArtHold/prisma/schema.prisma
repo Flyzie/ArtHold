@@ -58,7 +58,7 @@ model Comment {
     artworkId Int?
     user      User?     @relation(fields: [userId], references: [id])
     userId    Int?
-    parentId  Int?      @unique
+    parentId  Int?
     parent    Comment?  @relation("CommentReplies", fields: [parentId], references: [id])
     replies   Comment[] @relation("CommentReplies")
 }
