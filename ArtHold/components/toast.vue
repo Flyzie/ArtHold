@@ -4,22 +4,21 @@ const props = defineProps({
     type: String,
     required: true,
   },
-  openStatus: {
-    type: Boolean,
-    required: true,
-  },
 });
 
-const emit = defineEmits(["update:openStatus"]);
+const openStatus = defineModel("openStatus", {
+  type: Boolean,
+  required: true,
+});
 
 const closeToast = () => {
-  emit("update:openStatus", false);
+  openStatus.value = false;
 };
 </script>
 
 <template>
   <div
-    v-if="props.openStatus"
+    v-if="openStatus"
     class="w-48 flex items-center justify-center font-bold fixed top-10 right-5 border-2 border-errorRed border-dashed text-errorRed bg-textPrimary p-4 rounded-md z-50 animate-fade-down animate-once animate-duration-200 animate-ease-linear animate-normal"
   >
     {{ props.message }}

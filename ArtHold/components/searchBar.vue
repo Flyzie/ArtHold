@@ -14,10 +14,10 @@ const updateQueryInURL = useDebounceFn(() => {
   const currentQuery = router.currentRoute.value.query;
   const newQuery = { ...currentQuery, query };
 
-  if (query) {
-    router.push({ query: newQuery });
-    saveQuery(query);
-  }
+  //if (query) {
+  router.push({ query: newQuery });
+  saveQuery(query);
+  //}
 }, 300);
 
 const saveQuery = useDebounceFn((query: string) => {

@@ -3,6 +3,9 @@ import { ref } from "vue";
 import { useRouter } from "vue-router";
 const { status, data, signIn } = useAuth();
 
+// lots of unused variables in differnet places, pay attention to that.
+// make sure your VS Code extensions are working properly and show you used variables.
+// keeping the code clean is important!
 const route = useRoute();
 const router = useRouter();
 
@@ -19,7 +22,9 @@ const errors = ref({
   imageError: false,
 });
 
-const errorGate = computed(() => {
+// no need for it to be reactive, because it's only used in the submit function.
+// it could be a simple function instead.
+const hasErrors = computed(() => {
   return Object.values(errors.value).every((error) => !error);
 });
 
@@ -57,7 +62,7 @@ const handleFileChange = (event: Event) => {
 const handleEdit = async (e: any) => {
   formSubmitted.value = true;
   checkForErrors();
-  if (errorGate) {
+  if (hasErrors) {
     const formData = new FormData(this);
     formData.append("id", String(data.value?.user.id));
     formData.append("name", name.value);
