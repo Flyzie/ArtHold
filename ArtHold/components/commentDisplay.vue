@@ -21,6 +21,9 @@ const replies = computed(() => {
 const loggedIn = computed(() => status.value === "authenticated");
 const artworkID = Number(route.params.artworkID);
 
+// event names should be more descriptive and make sense inside of this component
+// (without assumption of what it will do in parent component)
+// E.g. better name would be "commentAdded", "commentSubmitted", "". Same for CommentItem component.
 const emit = defineEmits(["refreshComponent"]);
 
 const handlePostComment = async (newComment: string) => {

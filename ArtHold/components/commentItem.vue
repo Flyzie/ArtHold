@@ -39,6 +39,12 @@ const profileImage = computed(() => {
     : "/placeholderProfile.jpg";
 });
 
+// Usually component shouldn't be responsible of deleting the data it was passed.
+// Its just easier to reason about data ownership in the app this way.
+
+// Better approach would be that this ocmponent only emits event (e.g. "deleteComment"),
+// While parent component which is responsible for loading the data would handle the deletion in even thandler, and refresh the list.
+// Same goes for editing.
 const handleDelete = async () => {
   const { error } = await useFetch("/api/artworkUtils/deleteComment", {
     method: "DELETE",

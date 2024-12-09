@@ -5,7 +5,7 @@ import Toast from "~/components/toast.vue";
 const showErrorToast = ref(false);
 const errorMessage = ref("");
 
-onErrorCaptured((err, instance, info) => {
+onErrorCaptured((err) => {
   errorMessage.value = String(err);
   showErrorToast.value = true;
 });
@@ -13,11 +13,7 @@ onErrorCaptured((err, instance, info) => {
 
 <template>
   <div>
-    <Toast
-      v-if="showErrorToast"
-      :message="errorMessage"
-      v-model:openStatus="showErrorToast"
-    />
+    <Toast :message="errorMessage" v-model:openStatus="showErrorToast" />
     <NuxtLayout>
       <NuxtPage />
     </NuxtLayout>

@@ -18,6 +18,9 @@ const isUser = computed(() => {
   }
 });
 
+// see the video I sent you about the useFetch composable, why its important to use it only in the setup function,
+// and how refresh of the data should be done ("refresh" function returned by useFetch).
+// Instead of re-assigning data to the variable, try to use composables more.
 const reloadComments = async () => {
   const freshArtworkRef = await useArtwork(Number(route.params.artworkID));
   artwork.value = freshArtworkRef.value;

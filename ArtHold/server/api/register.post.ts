@@ -27,6 +27,7 @@ export default defineEventHandler(async (event) => {
     where: { email },
   });
 
+  // potential security risk: let's not reveal that the user already exists
   if (existingUser) {
     throw createError({
       statusCode: 400,
@@ -44,6 +45,8 @@ export default defineEventHandler(async (event) => {
     },
   });
 
+  // no need to do explicit try-catch in all APIs if it doesn't contain any additional logic,
+  // global error handler is already defined
   try {
     await prisma.album.create({
       data: {
