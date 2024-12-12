@@ -13,8 +13,8 @@ export default NuxtAuthHandler({
   providers: [
     // @ts-expect-error Use .default here for it to work during SSR.
     GithubProvider.default({
-      clientId: "Ov23limJtRomKBJhOofo",
-      clientSecret: "62204853902b100f5c28c72eb19012ddb271153b",
+      clientId: process.env.GITHUB_CLIENT_ID,
+      clientSecret: process.env.GITHUB_CLIENT_SECRET,
     }),
 
     // @ts-expect-error Use .default here for it to work during SSR.
