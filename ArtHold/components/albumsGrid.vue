@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import useUserAlbums from "~/composables/useUserAlbums";
 const { data } = useAuth();
 import type { AlbumWithArtworks } from "~/composables/useUserAlbums";
 const route = useRoute();

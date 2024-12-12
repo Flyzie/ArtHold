@@ -3,7 +3,14 @@ import { PrismaClient } from "@prisma/client";
 const prisma = new PrismaClient();
 
 export default defineEventHandler(async (event) => {
-  const { userID } = event.context.params;
+  const params = event.context.params;
+  if (!params || !params.userID) {
+    throw createError({
+      statusCode: 400,
+      statusMessage: "Invalid user ID",
+    });
+  }
+  const { userID } = params;
 
   if (!userID) {
     throw createError({

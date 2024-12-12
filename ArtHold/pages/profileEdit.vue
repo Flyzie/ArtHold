@@ -10,7 +10,6 @@ const userData = await useUser(Number(data.value?.user.id));
 const name = ref(userData.value?.name || "");
 const description = ref(userData.value?.description || "");
 const image = ref<File | null>(null);
-//const image = ref(userData.value?.image);
 
 const errors = ref({
   nameError: false,

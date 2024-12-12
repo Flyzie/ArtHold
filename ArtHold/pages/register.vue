@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import { ref } from "vue";
-
 const { signIn } = useAuth();
 
 const name = ref("");

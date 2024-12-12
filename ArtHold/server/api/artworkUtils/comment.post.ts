@@ -1,4 +1,4 @@
-import { PrismaClient, Comment } from "@prisma/client";
+import { PrismaClient } from "@prisma/client";
 import { getServerSession } from "#auth";
 const prisma = new PrismaClient();
 
