@@ -3,7 +3,7 @@ import useUser from "~/composables/useUser";
 import useUserAlbums from "~/composables/useUserAlbums";
 const route = useRoute();
 
-const { status, data } = useAuth();
+const { data } = useAuth();
 
 const userData = await useUser(Number(route.params.userID));
 const userAlbums = await useUserAlbums(Number(route.params.userID));
@@ -13,8 +13,6 @@ const profileImage = computed(() => {
     ? userData?.value?.image
     : "/placeholderProfile.jpg";
 });
-
-const hoveredImageId = ref(null);
 
 const isUser = computed(() => {
   if (data.value?.user.id === Number(route.params.userID)) {
@@ -39,7 +37,7 @@ const formattedDate = computed(() => {
 <template>
   <div class="grid grid-cols-3 grid-rows-1 w-full p-5 gap-4">
     <div class="col-span-2">
-      <AlbumsGrid :albums="userAlbums" class="mb-2"></AlbumsGrid>
+      <AlbumsGrid :albums="userAlbums ?? []" class="mb-2"></AlbumsGrid>
       <div>
         <NuxtPage
           class="animate-fade-right animate-once animate-duration-100 animate-ease-linear animate-normal"

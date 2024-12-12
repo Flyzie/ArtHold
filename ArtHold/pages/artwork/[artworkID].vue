@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import useUser from "~/composables/useUser";
 import { useArtwork } from "~/composables/useArtwork";
+
 const route = useRoute();
 
 const { data, status } = useAuth();
@@ -36,21 +37,20 @@ const reloadComments = async () => {
       class="md:col-span-1 col-span-3 flex flex-col justify-start items-start p-5 gap-5 bg-secondary rounded-md"
     >
       <div class="flex flex-wrap gap-6">
-        <NuxtImg
-          :src="userData?.image ?? ''"
-          fit="cover"
-          width="200"
-          height="200"
-          class="rounded-full aspect-square mb-6 border-solid border-8 border-textSecondary"
-        ></NuxtImg>
+        <NuxtLink :to="{ path: `/${userData?.id}` }">
+          <NuxtImg
+            :src="userData?.image ?? ''"
+            fit="cover"
+            width="200"
+            height="200"
+            class="rounded-full aspect-square mb-6 border-solid border-8 border-textSecondary"
+          ></NuxtImg>
+        </NuxtLink>
         <div>
           <h1 class="text-3xl bg-textPrimary text-textSecondary p-1">
             {{ userData?.name }}
           </h1>
           <p class="text-2xl text-white p-1">{{ userData?.description }}</p>
-          <p class="text-xl text-white p-1">
-            Likes: {{ userData?.likedArtworks }}
-          </p>
         </div>
       </div>
       <div class="flex flex-wrap items-center gap-3">
@@ -69,14 +69,14 @@ const reloadComments = async () => {
           Likes: {{ artwork?.likes }}
         </p>
         <LikeButton
-          v-if="loggedIn"
+          v-if="loggedIn && artwork"
           :artworkID="artwork?.id"
           :likes="artwork?.likes"
         ></LikeButton>
         <p class="text-gray mt-10">Posted:</p>
       </div>
       <CommentDisplay
-        @refreshComponent="reloadComments"
+        @commentAdded="reloadComments"
         :comments="comments"
       ></CommentDisplay>
     </div>

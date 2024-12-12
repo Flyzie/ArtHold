@@ -1,11 +1,11 @@
 <script setup lang="ts">
 import useUserAlbums from "~/composables/useUserAlbums";
 const { data } = useAuth();
-import type { Album } from "@prisma/client";
+import type { AlbumWithArtworks } from "~/composables/useUserAlbums";
 const route = useRoute();
 
 const props = defineProps<{
-  albums: Album[];
+  albums: AlbumWithArtworks[];
 }>();
 
 const hoveredImageId = ref(null);

@@ -7,7 +7,7 @@ const password = ref("");
 async function handleSignIn() {
   formSubmitted.value = true;
   checkForErrors();
-  if (errorGate) {
+  if (!errorGate) {
     await signIn("github");
   } else {
     return;

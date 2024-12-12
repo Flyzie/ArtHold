@@ -8,6 +8,10 @@ interface ArtworkWithComments extends Artwork {
   assignedComments: CommentWithReplies[];
 }
 
+export interface ArtworkWithUser extends Artwork {
+  user: User;
+}
+
 export async function useArtwork(artworkID: Number) {
   const { data, error } = await useFetch<ArtworkWithComments>(
     `/api/artwork/${artworkID}`,

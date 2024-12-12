@@ -1,9 +1,8 @@
 <script setup lang="ts">
-import type { Comment, User } from "@prisma/client";
-import type { CommentWithReplies } from "~/composables/useArtwork";
+import type { Comment } from "@prisma/client";
 const { data } = useAuth();
 const props = defineProps<{
-  comment: CommentWithReplies;
+  comment: Comment;
   replies?: Comment[];
 }>();
 
@@ -14,14 +13,12 @@ const editMode = ref(false);
 const replyMode = ref(false);
 const commentContent = ref(props.comment.contents);
 
-console.log(props.comment.replies);
-
 const assignedReplies = computed(() => {
   if (props.replies)
     return props.replies.filter((reply) => reply.parentId === commentID);
 });
 
-const emit = defineEmits(["refreshComments"]);
+const emit = defineEmits(["commentAdded"]);
 
 const isOp = computed(() => {
   if (userId === props.comment.userId) {
@@ -56,7 +53,7 @@ const handleDelete = async () => {
     });
   }
   isModalOpen.value = false;
-  emit("refreshComments");
+  emit("commentAdded");
 };
 
 const handleEdit = async () => {
@@ -77,7 +74,7 @@ const handleEdit = async () => {
     });
   }
   editMode.value = false;
-  emit("refreshComments");
+  emit("commentAdded");
 };
 
 const handlePostReply = async (newComment: string) => {
@@ -99,7 +96,7 @@ const handlePostReply = async (newComment: string) => {
     });
   }
   replyMode.value = false;
-  emit("refreshComments");
+  emit("commentAdded");
 };
 </script>
 <template>
@@ -186,7 +183,7 @@ const handlePostReply = async (newComment: string) => {
         v-for="reply in assignedReplies"
         :key="reply.id"
         :comment="reply"
-        @refreshComments="emit('refreshComments')"
+        @commentAdded="emit('commentAdded')"
       />
     </div>
   </div>

@@ -1,23 +1,19 @@
 <script setup lang="ts">
-import { ref, watch } from "vue";
+import { ref } from "vue";
 import { useRouter } from "vue-router";
-//import { useFilteredArtworksStore } from "~/stores/filteredArtworks";
 
 const input = ref("");
 const router = useRouter();
 const searchHistory = ref<string[]>([]);
 const isActive = ref(false);
-//const store = useFilteredArtworksStore();
 
 const updateQueryInURL = useDebounceFn(() => {
   const query = input.value.trim();
   const currentQuery = router.currentRoute.value.query;
   const newQuery = { ...currentQuery, query };
 
-  if (query) {
-    router.push({ query: newQuery });
-    saveQuery(query);
-  }
+  router.push({ query: newQuery });
+  saveQuery(query);
 }, 300);
 
 const saveQuery = useDebounceFn((query: string) => {

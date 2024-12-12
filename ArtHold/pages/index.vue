@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import type { Artwork } from "@prisma/client";
+import type { ArtworkWithUser } from "~/composables/useArtwork";
 const route = useRoute();
 const artworks = ref<Artwork[]>([]);
 
@@ -59,7 +60,7 @@ onMounted(async () => {
 <template>
   <div class="p-4 px-6 w-full">
     <ArtworksGrid
-      :artworks="artworks"
+      :artworks="(artworks as ArtworkWithUser[])"
       @intersected="fetchArtworks(currentPage)"
     ></ArtworksGrid>
   </div>

@@ -3,7 +3,6 @@ import useUserAlbums from "~/composables/useUserAlbums";
 import { ref, computed } from "vue";
 const { data } = useAuth();
 const router = useRouter();
-const tags = await useTags();
 const albums = await useUserAlbums(Number(data.value?.user.id));
 
 const artworkTitle = ref("");
@@ -71,7 +70,7 @@ const handleFileChange = (event: Event) => {
 const handleUpload = async (e: any) => {
   formSubmitted.value = true;
   checkForErrors();
-  if (errorGate) {
+  if (!errorGate) {
     const formData = new FormData();
     formData.append("userId", String(data.value?.user.id));
     formData.append("title", artworkTitle.value);

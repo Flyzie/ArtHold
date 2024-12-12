@@ -1,9 +1,8 @@
 <script setup lang="ts">
 import { ref } from "vue";
 import { useRouter } from "vue-router";
-const { status, data, signIn } = useAuth();
+const { data } = useAuth();
 
-const route = useRoute();
 const router = useRouter();
 
 const userData = await useUser(Number(data.value?.user.id));
@@ -57,7 +56,7 @@ const handleFileChange = (event: Event) => {
 const handleEdit = async (e: any) => {
   formSubmitted.value = true;
   checkForErrors();
-  if (errorGate) {
+  if (!errorGate) {
     const formData = new FormData(this);
     formData.append("id", String(data.value?.user.id));
     formData.append("name", name.value);

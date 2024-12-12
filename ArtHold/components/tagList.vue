@@ -52,7 +52,7 @@ onBeforeUnmount(() => {
       @click="toggleDropdown"
       type="button"
     >
-      {{ componentName }}
+      {{ props.componentName }}
     </button>
     <h1 class="flex justify-center items-center p-2">{{ selectedTag }}</h1>
     <ul v-if="isOpen" class="bg-textSecondary rounded-sm absolute left-16">

@@ -3,7 +3,15 @@ import { PrismaClient } from "@prisma/client";
 const prisma = new PrismaClient();
 
 export default defineEventHandler(async (event) => {
-  const { albumID } = event.context.params;
+  const params = event.context.params;
+  if (!params || !params.albumID) {
+    throw createError({
+      statusCode: 400,
+      statusMessage: "Invalid album ID",
+    });
+  }
+
+  const { albumID } = params;
 
   if (!albumID) {
     throw createError({

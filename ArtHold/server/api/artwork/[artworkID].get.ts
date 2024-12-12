@@ -3,7 +3,14 @@ import { PrismaClient } from "@prisma/client";
 const prisma = new PrismaClient();
 
 export default defineEventHandler(async (event) => {
-  const { artworkID } = event.context.params;
+  const params = event.context.params;
+  if (!params || !params.artworkID) {
+    throw createError({
+      statusCode: 400,
+      statusMessage: "Invalid artwork ID",
+    });
+  }
+  const { artworkID } = params;
 
   const artworkIdInt = parseInt(artworkID, 10);
   if (isNaN(artworkIdInt)) {

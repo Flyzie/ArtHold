@@ -5,7 +5,7 @@ const toggleDropdown = () => {
   isOpen.value = !isOpen.value;
 };
 
-const closeDropdown = (event) => {
+const closeDropdown = (event: any) => {
   if (!event.target.closest(".dropdown-menu")) {
     isOpen.value = false;
   }

@@ -1,5 +1,7 @@
 import { PrismaClient } from "@prisma/client";
 import { getServerSession } from "#auth";
+import io from "~/server/socketServer"; // Import the socket.io server
+
 const prisma = new PrismaClient();
 
 export default defineEventHandler(async (event) => {
@@ -117,6 +119,7 @@ export default defineEventHandler(async (event) => {
       statusMessage: "Artwork not found",
     });
   }
+
   try {
     return {
       statusCode: 200,

@@ -23,16 +23,6 @@ export default defineEventHandler(async (event) => {
     });
   }
 
-  const existingUser = await prisma.user.findUnique({
-    where: { email },
-  });
-
-  if (existingUser) {
-    throw createError({
-      statusCode: 400,
-      statusMessage: "User already exists",
-    });
-  }
   const saltRounds = 10;
   const hashedPassword = await bcrypt.hash(password, saltRounds);
 

@@ -1,9 +1,9 @@
 <script setup lang="ts">
-import type { Artwork } from "@prisma/client";
+import type { ArtworkWithUser } from "~/composables/useArtwork";
 import { ref, onMounted } from "vue";
 
 const props = defineProps<{
-  artworks: Artwork[];
+  artworks: ArtworkWithUser[];
 }>();
 
 const emit = defineEmits(["intersected"]);

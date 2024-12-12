@@ -5,7 +5,7 @@ interface ArtworkWithUser extends Artwork {
 }
 
 interface AlbumWithArtworks extends Album {
-  assignedArtworks: Artwork[];
+  assignedArtworks: ArtworkWithUser[];
 }
 
 export default async (albumID: Number) => {

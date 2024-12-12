@@ -1,13 +1,12 @@
 <script setup lang="ts">
 import { ref } from "vue";
-import { useRouter } from "vue-router";
-const { status, signIn } = useAuth();
+
+const { signIn } = useAuth();
 
 const name = ref("");
 const email = ref("");
 const password = ref("");
 const confirmPassword = ref("");
-const router = useRouter();
 
 const passwordType = ref("password");
 
@@ -69,7 +68,7 @@ const checkForErrors = () => {
 const handleRegister = async () => {
   formSubmitted.value = true;
   checkForErrors();
-  if (errorGate) {
+  if (!errorGate) {
     const response = await fetch("/api/register", {
       method: "POST",
       headers: {

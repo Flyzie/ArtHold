@@ -9,6 +9,6 @@ const userAlbum = await useAlbum(albumID);
 </script>
 
 <template>
-  <ArtworksGrid :artworks="userAlbum?.assignedArtworks"></ArtworksGrid>
+  <ArtworksGrid :artworks="userAlbum?.assignedArtworks ?? []"></ArtworksGrid>
 </template>
 <style scoped></style>

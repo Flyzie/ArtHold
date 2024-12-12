@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import { useRoute } from "vue-router";
-import type { Comment, User } from "@prisma/client";
 import type { CommentWithReplies } from "~/composables/useArtwork";
 
 const { status } = useAuth();
@@ -21,7 +20,7 @@ const replies = computed(() => {
 const loggedIn = computed(() => status.value === "authenticated");
 const artworkID = Number(route.params.artworkID);
 
-const emit = defineEmits(["refreshComponent"]);
+const emit = defineEmits(["commentAdded"]);
 
 const handlePostComment = async (newComment: string) => {
   const { error } = await useFetch("/api/artworkUtils/comment", {
@@ -41,11 +40,11 @@ const handlePostComment = async (newComment: string) => {
       statusMessage: `${error.value.data.message}`,
     });
   }
-  emit("refreshComponent");
+  emit("commentAdded");
 };
 
 const emitRefreshComponent = () => {
-  emit("refreshComponent");
+  emit("commentAdded");
 };
 </script>
 <template>
@@ -57,7 +56,7 @@ const emitRefreshComponent = () => {
         :comment="comment"
         :replies="replies"
         :key="comment.id"
-        @refreshComments="emitRefreshComponent"
+        @commentAdded="emitRefreshComponent"
       ></CommentItem>
     </div>
     <div v-if="loggedIn">
