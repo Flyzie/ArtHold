@@ -16,7 +16,7 @@ ArtHold is a web application designed for artists and art enthusiasts to showcas
 - **Infinite Scroll**: Implemented using Intersection Observer API to load more artworks as the user scrolls down.
 - **Debounced Search**: Search functionality with debouncing to reduce the number of API calls.
 - **File Uploads**: Handled using Formidable for parsing form data and file uploads.
-- **Error Handling**: Global error handling using Nuxt's error handler.
+- **Error Handling**: Global error handling using Nuxt's error handler with error Toasts.
 - **State Management**: Managed using Vue's Composition API and reactive state.
 - **CSS Utilities**: Tailwind CSS for styling and utility classes.
 - **Database ORM**: Prisma ORM for database interactions with PostgreSQL.
