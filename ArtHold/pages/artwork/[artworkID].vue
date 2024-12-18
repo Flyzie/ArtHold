@@ -6,7 +6,8 @@ const route = useRoute();
 
 const { data, status } = useAuth();
 
-const artwork = await useArtwork(Number(route.params.artworkID));
+const fetchData = await useArtwork(Number(route.params.artworkID));
+const artwork = fetchData.data;
 const userData = await useUser(Number(artwork.value?.userID));
 const loggedIn = computed(() => status.value === "authenticated");
 const comments = computed(() => artwork.value?.assignedComments ?? []);
@@ -20,8 +21,7 @@ const isUser = computed(() => {
 });
 
 const reloadComments = async () => {
-  const freshArtworkRef = await useArtwork(Number(route.params.artworkID));
-  artwork.value = freshArtworkRef.value;
+  await fetchData.refresh();
 };
 </script>
 
@@ -53,7 +53,7 @@ const reloadComments = async () => {
           <p class="text-2xl text-white p-1">{{ userData?.description }}</p>
         </div>
       </div>
-      <div class="flex flex-wrap items-center gap-3">
+      <div class="flex flex-wrap items-start justify-start gap-3">
         <h1 class="text-8xl bg-textPrimary text-textSecondary p-1 text-wrap">
           {{ artwork?.title }}
         </h1>

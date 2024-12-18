@@ -13,7 +13,7 @@ export interface ArtworkWithUser extends Artwork {
 }
 
 export async function useArtwork(artworkID: Number) {
-  const { data, error } = await useFetch<ArtworkWithComments>(
+  const { data, error, refresh } = await useFetch<ArtworkWithComments>(
     `/api/artwork/${artworkID}`,
     {
       lazy: true,
@@ -24,5 +24,5 @@ export async function useArtwork(artworkID: Number) {
     throw createError({ statusCode: 400, statusMessage: "Artwork not found" });
   }
 
-  return data;
+  return { data, refresh };
 }
