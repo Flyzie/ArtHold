@@ -4,7 +4,7 @@ export interface CommentWithReplies extends Comment {
   replies: Comment[];
 }
 
-interface ArtworkWithComments extends Artwork {
+export interface ArtworkWithComments extends Artwork {
   assignedComments: CommentWithReplies[];
 }
 
@@ -12,11 +12,12 @@ export interface ArtworkWithUser extends Artwork {
   user: User;
 }
 
-export async function useArtwork(artworkID: Number) {
-  const { data, error, refresh } = await useFetch<ArtworkWithComments>(
+export async function useArtwork(artworkID: Number, isImmediate: boolean) {
+  const { data, error, refresh, execute } = await useFetch<ArtworkWithComments>(
     `/api/artwork/${artworkID}`,
     {
       lazy: true,
+      immediate: isImmediate,
     }
   );
 
@@ -24,5 +25,5 @@ export async function useArtwork(artworkID: Number) {
     throw createError({ statusCode: 400, statusMessage: "Artwork not found" });
   }
 
-  return { data, refresh };
+  return { data, refresh, execute };
 }

@@ -6,8 +6,10 @@ const route = useRoute();
 
 const { data, status } = useAuth();
 
-const fetchData = await useArtwork(Number(route.params.artworkID));
-const artwork = fetchData.data;
+const { data: artwork, refresh } = await useArtwork(
+  Number(route.params.artworkID),
+  true
+);
 const userData = await useUser(Number(artwork.value?.userID));
 const loggedIn = computed(() => status.value === "authenticated");
 const comments = computed(() => artwork.value?.assignedComments ?? []);
@@ -21,7 +23,7 @@ const isUser = computed(() => {
 });
 
 const reloadComments = async () => {
-  await fetchData.refresh();
+  await refresh();
 };
 </script>
 
@@ -59,6 +61,10 @@ const reloadComments = async () => {
         </h1>
         <NuxtLink
           v-if="isUser"
+          :to="{
+            name: 'projects-newArtwork',
+            query: { artworkId: `${artwork?.id}` },
+          }"
           class="p-1 bg-textSecondary text-textPrimary rounded-lg hover:bg-textPrimary hover:text-textSecondary"
           >Edit Artwork</NuxtLink
         >

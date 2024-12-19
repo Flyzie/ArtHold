@@ -55,7 +55,7 @@ const handleFileChange = (event: Event) => {
 const handleEdit = async (e: any) => {
   formSubmitted.value = true;
   checkForErrors();
-  if (!errorGate) {
+  if (errorGate.value) {
     const formData = new FormData(this);
     formData.append("id", String(data.value?.user.id));
     formData.append("name", name.value);

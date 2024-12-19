@@ -67,7 +67,7 @@ const checkForErrors = () => {
 const handleRegister = async () => {
   formSubmitted.value = true;
   checkForErrors();
-  if (!errorGate) {
+  if (errorGate.value) {
     const response = await fetch("/api/register", {
       method: "POST",
       headers: {

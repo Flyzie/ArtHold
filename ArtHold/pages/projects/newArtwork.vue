@@ -3,14 +3,32 @@ import useUserAlbums from "~/composables/useUserAlbums";
 import { ref, computed } from "vue";
 const { data } = useAuth();
 const router = useRouter();
+const route = useRoute();
 const albums = await useUserAlbums(Number(data.value?.user.id));
 
-const artworkTitle = ref("");
-const artworkDescription = ref("");
+const artworkTitle = ref<string>("");
+const artworkDescription = ref<string>("");
 const image = ref<File | null>(null);
 const imageUrl = ref<string | null>(null);
 const selectedAlbum = ref<number | null>(null);
 const selectedTags = ref<{ id: number; name: string }[]>([]);
+
+const query = route.query.artworkId;
+const isEditing = ref(!!query);
+const { data: existingArtwork, refresh } = await useArtwork(
+  Number(query),
+  false
+);
+
+onMounted(async () => {
+  if (isEditing) {
+    await refresh();
+    artworkTitle.value = existingArtwork.value?.title || "";
+    artworkDescription.value = existingArtwork.value?.description || "";
+    imageUrl.value = existingArtwork.value?.artworkImage || null;
+    selectedAlbum.value = existingArtwork.value?.albumID || null;
+  }
+});
 
 const errors = ref({
   titleError: false,
@@ -40,7 +58,7 @@ const checkForErrors = () => {
   if (artworkTitle.value === "") {
     errors.value.titleError = true;
   }
-  if (image.value === null) {
+  if (image.value === null && !isEditing.value) {
     errors.value.imageError = true;
   }
   if (artworkDescription.value === "") {
@@ -49,6 +67,8 @@ const checkForErrors = () => {
   if (selectedAlbum.value === null) {
     errors.value.albumError = true;
   }
+
+  console.log(errorGate.value);
 };
 
 const handleDrop = (e: DragEvent) => {
@@ -70,9 +90,8 @@ const handleFileChange = (event: Event) => {
 const handleUpload = async (e: any) => {
   formSubmitted.value = true;
   checkForErrors();
-  if (!errorGate) {
+  if (errorGate.value) {
     const formData = new FormData();
-    formData.append("userId", String(data.value?.user.id));
     formData.append("title", artworkTitle.value);
     formData.append("description", artworkDescription.value);
     if (image.value) {
@@ -110,6 +129,47 @@ const handleUpload = async (e: any) => {
   }
 };
 
+const handleEdit = async (e: any) => {
+  formSubmitted.value = true;
+  checkForErrors();
+  if (errorGate.value) {
+    const formData = new FormData();
+    formData.append("title", artworkTitle.value);
+    formData.append("description", artworkDescription.value);
+    if (image.value) {
+      formData.append("image", image.value);
+    }
+    if (selectedAlbum.value) {
+      formData.append("albumId", String(selectedAlbum.value));
+    }
+    if (selectedTags.value.length) {
+      formData.append(
+        "tags",
+        JSON.stringify(selectedTags.value.map((tag) => tag.id))
+      );
+    }
+
+    for (const [k, v] of formData.entries()) {
+      console.log(k, v);
+    }
+
+    const response = await $fetch("/api/artworkUtils/updateArtwork", {
+      method: "PUT",
+
+      body: formData,
+      params: {
+        artworkId: query,
+      },
+    });
+
+    if (!response) {
+      throw new Error("SOMETHING WRONG WITH EDITING");
+    }
+  } else {
+    return;
+  }
+};
+
 const addTag = (tag: { id: number; name: string }) => {
   if (!selectedTags.value.find((t) => t.id === tag.id)) {
     selectedTags.value.push(tag);
@@ -124,7 +184,7 @@ definePageMeta({
   <div class="w-full px-5 h-full">
     <div class="w-full p-5 h-full bg-secondary rounded-md">
       <form
-        @submit.prevent="handleUpload"
+        @submit.prevent="handleEdit"
         class="flex flex-col justify-center items-center p-5 w-full"
       >
         <label
