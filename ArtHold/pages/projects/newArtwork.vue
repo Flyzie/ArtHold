@@ -15,6 +15,8 @@ const selectedTags = ref<{ id: number; name: string }[]>([]);
 
 const query = route.query.artworkId;
 const isEditing = ref(!!query);
+
+const buttonText = ref(isEditing.value ? "Edit" : "Upload");
 const { data: existingArtwork, refresh } = await useArtwork(
   Number(query),
   false
@@ -155,7 +157,6 @@ const handleEdit = async (e: any) => {
 
     const response = await $fetch("/api/artworkUtils/updateArtwork", {
       method: "PUT",
-
       body: formData,
       params: {
         artworkId: query,
@@ -164,6 +165,21 @@ const handleEdit = async (e: any) => {
 
     if (!response) {
       throw new Error("SOMETHING WRONG WITH EDITING");
+    }
+    router.push(`/artwork/${query}`);
+  } else {
+    return;
+  }
+};
+
+const handleSubmit = async (e: any) => {
+  formSubmitted.value = true;
+  checkForErrors();
+  if (errorGate.value) {
+    if (isEditing.value) {
+      await handleEdit(e);
+    } else {
+      await handleUpload(e);
     }
   } else {
     return;
@@ -176,6 +192,8 @@ const addTag = (tag: { id: number; name: string }) => {
   }
 };
 
+console.log(isEditing.value);
+
 definePageMeta({
   middleware: ["redirect-if-not-authenticated"],
 });
@@ -184,7 +202,7 @@ definePageMeta({
   <div class="w-full px-5 h-full">
     <div class="w-full p-5 h-full bg-secondary rounded-md">
       <form
-        @submit.prevent="handleEdit"
+        @submit.prevent="handleSubmit"
         class="flex flex-col justify-center items-center p-5 w-full"
       >
         <label
@@ -270,7 +288,7 @@ definePageMeta({
         <input
           type="submit"
           class="text-2xl cursor-pointer bg-textSecondary p-5 w-7/12 rounded-md hover:bg-textPrimary hover:text-textSecondary"
-          value="Upload"
+          :value="buttonText"
         />
       </form>
     </div>
