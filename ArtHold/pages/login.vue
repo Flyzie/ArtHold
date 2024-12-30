@@ -1,5 +1,5 @@
 <script setup lang="ts">
-const { status, signIn, signOut } = useAuth();
+const { signIn } = useAuth();
 
 const email = ref("");
 const password = ref("");

@@ -26,6 +26,9 @@ export default defineEventHandler(async (event) => {
     },
     include: {
       assignedArtworks: {
+        orderBy: {
+          createdAt: "desc",
+        },
         include: {
           user: true,
         },

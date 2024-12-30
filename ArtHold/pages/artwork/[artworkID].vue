@@ -3,6 +3,7 @@ import useUser from "~/composables/useUser";
 import { useArtwork } from "~/composables/useArtwork";
 
 const route = useRoute();
+const router = useRouter();
 
 const { data, status } = useAuth();
 
@@ -10,9 +11,12 @@ const { data: artwork, refresh } = await useArtwork(
   Number(route.params.artworkID),
   true
 );
+
 const userData = await useUser(Number(artwork.value?.userID));
 const loggedIn = computed(() => status.value === "authenticated");
 const comments = computed(() => artwork.value?.assignedComments ?? []);
+const artworkID = artwork.value?.id;
+const isModalOpen = ref(false);
 
 const isUser = computed(() => {
   if (data.value?.user.id === Number(artwork.value?.userID)) {
@@ -21,6 +25,26 @@ const isUser = computed(() => {
     return false;
   }
 });
+
+const handleDelete = async () => {
+  const { error } = await useFetch("/api/artworkUtils/deleteArtwork", {
+    method: "DELETE",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+      artworkID: artworkID,
+    }),
+  });
+  if (error.value) {
+    throw createError({
+      statusCode: 400,
+      statusMessage: `${error.value.data.message}`,
+    });
+  }
+  isModalOpen.value = false;
+  router.push(`/`);
+};
 
 const reloadComments = async () => {
   await refresh();
@@ -68,6 +92,11 @@ const reloadComments = async () => {
           class="p-1 bg-textSecondary text-textPrimary rounded-lg hover:bg-textPrimary hover:text-textSecondary"
           >Edit Artwork</NuxtLink
         >
+        <DeleteButton
+          v-if="isUser"
+          @click="isModalOpen = !isModalOpen"
+          text="Delete Artwork"
+        ></DeleteButton>
       </div>
       <div class="w-full">
         <p class="text-3xl text-white px-1">{{ artwork?.description }}</p>
@@ -87,6 +116,11 @@ const reloadComments = async () => {
       ></CommentDisplay>
     </div>
   </div>
+  <ActionModal
+    @cancel="isModalOpen = false"
+    @confirm="handleDelete"
+    :isOpen="isModalOpen"
+  ></ActionModal>
 </template>
 
 <style scoped></style>

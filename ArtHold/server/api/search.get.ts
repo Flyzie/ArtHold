@@ -16,6 +16,9 @@ export default defineEventHandler(async (event) => {
     const artworks = await prisma.artwork.findMany({
       skip: skipSize,
       take: takeSize,
+      orderBy: {
+        createdAt: "desc",
+      },
       where: {
         AND: [
           { title: { contains: q as string, mode: "insensitive" } },
